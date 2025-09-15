@@ -1,0 +1,87 @@
+@import "common.css";
+
+.header-brand-name {
+  font-size: 24px;
+  line-height: 36px;
+  font-weight: 700;
+  color: var(--primary-blue);
+}
+
+.header-logo {
+  font-size: 48px;
+  color: var(--primary-blue);
+}
+
+.search-input {
+  border-top-right-radius: 22px;
+  border-bottom-right-radius: 22px;
+}
+
+.btn-search {
+  top: 0;
+  right: 0;
+  height: 100%;
+  color: white;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding: 0 32px;
+}
+
+.btn-search:hover {
+  background-color: var(--primary-blue-hover);
+  color: white;
+}
+
+.btn-member {
+  border-radius: 22px;
+}
+
+.nav-link {
+  position: relative;
+}
+
+.nav-link:hover {
+  color: var(--primary-blue);
+}
+
+.nav-link:not(:last-of-type):after {
+  position: absolute;
+  content: "";
+  left: 0;
+  bottom: 2px;
+  width: 100%;
+  height: 4px;
+}
+
+.nav-link.active:after {
+  background-color: var(--primary-blue);
+}
+
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-link.show {
+  color: var(--primary-blue);
+}
+
+.navbar-nav .nav-link.active {
+  font-weight: 700;
+}
+
+.dropdown.nav-link:after {
+  display: none;
+}
+
+.nav-item .dropdown-menu {
+  width: 260px;
+  border: none;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.nav-item .dropdown-item {
+  color: var(--text-body);
+  font-size: 14px;
+}
+
+.nav-item .dropdown-item:hover {
+  background-color: var(--light-blue);
+  color: var(--primary-blue);
+}

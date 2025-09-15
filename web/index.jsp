@@ -7,7 +7,7 @@
 <%
     UserAccount u = MyUtils.getLoginedUser(session);
     if (u == null) {
-        response.sendRedirect(request.getContextPath() + "/login");
+        response.sendRedirect(request.getContextPath() + "/home");
         return;
     }
 %>

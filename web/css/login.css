@@ -1,0 +1,35 @@
+.login-container {
+  padding: 48px 0 48px 48px;
+  position: relative;
+  background-image: url("../image/bg-login.jpg");
+  background-repeat: no-repeat;
+  height: 100vh;
+  background-position: right bottom 48px;
+  background-size: 800px;
+  display: flex;
+  align-items: center;
+}
+
+.login-container-form {
+  height: 100%;
+  max-width: 600px;
+  padding: 80px 120px;
+  background: #ffffffff;
+  border-radius: 16px;
+  box-shadow: 0px 4px 9px #171a1f1c, 0px 0px 2px #171a1f1f;
+}
+
+.login-container .logo {
+  margin-bottom: 72px;
+}
+
+.login-container-form form {
+  margin-bottom: 28px;
+}
+
+.login-banner {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  min-width: 200px;
+}

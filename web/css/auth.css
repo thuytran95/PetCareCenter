@@ -1,0 +1,16 @@
+.auth {
+  height: 100vh;
+}
+
+.header {
+  padding: 40px 70px;
+}
+
+.auth-container {
+  background-image: url("../image/cat-dog.jpg");
+  background-size: 450px;
+  background-repeat: no-repeat;
+  background-position: 100% 100%;
+  width: 100%;
+  flex: 1;
+}
