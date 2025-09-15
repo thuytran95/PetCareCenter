@@ -1,0 +1,28 @@
+.footer-container {
+  background-color: var(--primary-blue);
+  color: white;
+  padding: 72px 0;
+}
+
+footer {
+  margin-top: 40px;
+  text-align: center;
+  color: gray;
+}
+
+.btn-submit {
+  background-color: transparent;
+  padding: 0;
+  width: fit-content;
+  top: 0;
+  right: -2px;
+  bottom: 0;
+  border-top-right-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.btn-submit img {
+  object-fit: cover;
+  height: 100%;
+}

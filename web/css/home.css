@@ -1,0 +1,66 @@
+.banner {
+  padding: 120px 0 100px;
+}
+
+.banner-title {
+  font-size: 52px;
+  font-weight: 700;
+  color: #323743;
+}
+
+.banner-content {
+  font-size: 18px;
+  color: #171a1f;
+  margin-bottom: 64px;
+}
+
+.banner-image {
+  width: 100%;
+  overflow: hidden;
+}
+
+.banner-image img {
+  object-fit: cover;
+  height: 400px;
+}
+
+.banner .btn {
+  width: 260px;
+}
+
+/*section service*/
+.service {
+  padding: 115px 0 64px;
+}
+
+.service-item {
+  /*max-width: 270px;*/
+  border: 1px solid var(--primary-blue);
+  border-radius: 6px;
+  padding: 24px;
+  box-shadow: 0px 0px 1px #171a1f12, 0px 0px 2px #171a1f1f;
+}
+
+.service-item-icon {
+  color: var(--primary-blue);
+  font-size: 24px;
+  margin-bottom: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.service-item-title {
+  font-size: 20px;
+}
+
+.service-item p {
+  min-height: 66px;
+}
+
+.service-item-link {
+  color: var(--text-body);
+}
+
+.service-list {
+  padding-top: 40px;
+}
