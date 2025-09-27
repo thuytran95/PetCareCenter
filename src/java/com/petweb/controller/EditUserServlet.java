@@ -31,8 +31,7 @@ public class EditUserServlet extends HttpServlet {
             String password = request.getParameter("password");
 
             // lấy user cũ theo id
-            UserAccount oldUser = DBUtils.findUser(conn,  request.getParameter("userName"));
-
+            UserAccount oldUser = DBUtils.findUser(conn, request.getParameter("userName"));
             UserAccount u = new UserAccount();
             u.setId(id);
             u.setUserName(userName);
@@ -47,11 +46,15 @@ public class EditUserServlet extends HttpServlet {
             if (avatarPart != null && avatarPart.getSize() > 0) {
                 u.setAvatar(avatarPart.getInputStream().readAllBytes());
             } else {
-                u.setAvatar(oldUser.getAvatar());
+                if (oldUser.getAvatar() != null) {
+                    u.setAvatar(oldUser.getAvatar());
+                }
             }
 
             DBUtils.updateUserById(conn, u);
-            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            request.setAttribute("user", u);
+            request.setAttribute("userName", u.getUserName());
+            response.sendRedirect("editUser.jsp?userName=" + u.getUserName());
         } catch (Exception e) {
             throw new ServletException(e);
         }
