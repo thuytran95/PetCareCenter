@@ -41,17 +41,14 @@
                                     Hãy tham gia ngay thôi!
                                 </p>
                                 <div class="d-flex gap-2">
-                                    <a class="btn btn-outline-blue px-5" href="login.jsp">Đăng nhập</a>
-                                    <a class="btn btn-primary-blue px-5" href="register.jsp">Đăng ký</a>
+                                    <a class="btn btn-outline-blue px-5" href="<%=request.getContextPath()%>/login">Đăng nhập</a>
+                                    <a class="btn btn-primary-blue px-5" href="<%=request.getContextPath()%>/register">Đăng ký</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </div>  
         </div>
-
     </body>
 </html>

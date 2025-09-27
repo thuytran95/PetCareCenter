@@ -13,6 +13,11 @@ import java.sql.Connection;
 @WebServlet("/changePassword")
 public class ChangePasswordServlet extends HttpServlet {
     @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("/changePassword.jsp").forward(request, response);
+    }
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String oldPass = request.getParameter("oldPassword");
@@ -31,8 +36,8 @@ public class ChangePasswordServlet extends HttpServlet {
             Connection conn = MyUtils.getStoredConnection(request);
 
             if (!user.getPassword().equals(oldPass)) {
-                request.setAttribute("errorMessage", "Mật khẩu cũ không đúng!");
-                request.getRequestDispatcher("/index.jsp").forward(request, response);
+                request.setAttribute("error", "Mật khẩu cũ không đúng!");
+                request.getRequestDispatcher("/changePassword.jsp").forward(request, response);
                 return;
             }
 
@@ -42,8 +47,8 @@ public class ChangePasswordServlet extends HttpServlet {
             user.setPassword(newPass);
             session.setAttribute("loginedUser", user);
 
-            request.setAttribute("successMessage", "Đổi mật khẩu thành công!");
-            request.getRequestDispatcher("/index.jsp").forward(request, response);
+            request.setAttribute("success", "Đổi mật khẩu thành công!");
+            request.getRequestDispatcher("/changePassword.jsp").forward(request, response);
 
         } catch (Exception e) {
             throw new ServletException(e);

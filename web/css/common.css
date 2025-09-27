@@ -1,68 +1,77 @@
 :root {
-    --primary-blue: #379AE6;
-    --primary-blue-hover: #166DB0;
-    --light-blue: #ECF6FF;
-    --text-body: #565D6D;
-    --border-input: #1E2128;
-    --text-input: #BDC1CA;
+  --primary-blue: #379ae6;
+  --primary-blue-hover: #166db0;
+  --light-blue: #ecf6ff;
+  --text-body: #565d6d;
+  --border-input: #1e2128;
+  --text-input: #bdc1ca;
 }
 
-body{
-    color: var(--text-body);
-    font-size: 14px;
-    line-height: 1.4;
+body {
+  color: var(--text-body);
+  font-size: 14px;
+  line-height: 1.4;
 }
 
-.heading{
-    font-size: 52px;
-    font-weight: 700;
-    color: #323743;
+.heading {
+  font-size: 52px;
+  font-weight: 700;
+  color: #323743;
 }
 
-.bg-primary-blue{
-    background-color: var(--primary-blue);
+.bg-primary-blue {
+  background-color: var(--primary-blue);
 }
 
 .btn {
-    border-radius: 20px;
+  border-radius: 20px;
 }
 
-.btn-primary-blue{
-    color: white;
-    background-color: var(--primary-blue);
+.btn-primary-blue {
+  color: white;
+  background-color: var(--primary-blue);
 }
 
-.btn-primary-blue:hover{
-    color: white;
-    background-color: var(--primary-blue-hover);
+.btn-primary-blue:hover {
+  color: white;
+  background-color: var(--primary-blue-hover);
 }
 
-.text-primary-blue{
-    color: var(--primary-blue);
+.btn-secondary-blue {
+  color: white;
+  background-color: var(--primary-blue-hover);
+  border: none;
 }
 
-.text-body{
-    color: var(--text-body);
+.btn-secondary-blue:hover {
+  background-color: var(--primary-blue-hover);
 }
 
-.btn-outline-blue{
-    border: 1px solid var(--primary-blue);
-    color: var(--primary-blue);
+.text-primary-blue {
+  color: var(--primary-blue);
 }
 
-.btn-outline-blue:hover{
-    background-color: var(--primary-blue);
-    color: white;
+.text-body {
+  color: var(--text-body);
 }
 
-.logo{
-    font-size: 24px;
-    color: var(--primary-blue);
-    font-weight: 700;
+.btn-outline-blue {
+  border: 1px solid var(--primary-blue);
+  color: var(--primary-blue);
 }
 
-.form-control:focus{
-    outline:none;
-    box-shadow: none;
+.btn-outline-blue:hover {
+  background-color: var(--primary-blue);
+  color: white;
 }
 
+.logo {
+  font-size: 24px;
+  color: var(--primary-blue);
+  font-weight: 700;
+}
+
+.form-control:focus {
+  outline: none;
+  box-shadow: none;
+}

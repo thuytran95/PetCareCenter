@@ -11,16 +11,13 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-@WebServlet(urlPatterns = { "/login" })
+@WebServlet(urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        RequestDispatcher dispatcher =
-                this.getServletContext().getRequestDispatcher("/login.jsp");
-        dispatcher.forward(request, response);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 
     @Override
@@ -54,20 +51,28 @@ public class LoginServlet extends HttpServlet {
             }
         }
 
-       
+        if (error != null) {
+            request.setAttribute("error", error);
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            
 
+            return;
+        }
         // login ok
         HttpSession session = request.getSession();
         MyUtils.storeLoginedUser(session, user);
         if (user != null) {
             session.setAttribute("userId", user.getId());
+            session.setAttribute("userName", user.getUserName());
         }
-        if (remember) MyUtils.storeUserCookie(response, user);
-        else MyUtils.deleteUserCookie(response);
+        if (remember) {
+            MyUtils.storeUserCookie(response, user);
+        } else {
+            MyUtils.deleteUserCookie(response);
+        }
 
         // Nếu là admin → chuyển tới trang danh sách user, còn user bình thường → index.jsp
-    
         response.sendRedirect(request.getContextPath() + "/index.jsp");
-       
+
     }
 }

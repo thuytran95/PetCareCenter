@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -10,51 +11,77 @@
             <link rel="stylesheet" href="css/register.css"/>
         </head>
         <body>
-            <div class="register-container">
-                <div class="register-container-form">
-                    <div class="logo d-flex justify-content-center align-items-center gap-2">
-                        <span><i class="fa-solid fa-paw"></i></span>
-                        <span>Pet-Care</span>
-                    </div> 
-                    <form method="post" action="<%=request.getContextPath()%>/login">
-                    <div class="form-container form-container-icon d-flex align-items-center mb-4">
-                        <span class="icon"><i class="fa-solid fa-user"></i></span>
-                        <input class="form-control ps-6" placeholder="Nhập tên đăng nhập" name="userName" type="text" required/>
-                    </div>  
-                    <div class="form-container form-container-icon d-flex align-items-center mb-1">
-                        <span class="icon"><i class="fa-solid fa-lock"></i></span>
-                        <input class="form-control ps-6" placeholder="Mật khẩu: tối đa 8 ký tự" name="password" type="password" required />
+        <c:set var="user" value="${requestScope.user}"/>
+        <div class="container-fluid">
+            <div class="toast-container position-fixed top-0 left-0 p-3">
+                <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header d-flex align-items-center justify-content-end">
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
-                    <a href="#" class="text-body link-underline link-underline-opacity-0 d-block text-end mb-5" >Quên mật khẩu?</a>
-                    <button class="btn btn-primary-blue w-100" type="submit">Đăng nhập</button>
-                </form>
+                    <div class="toast-body">
+                        <c:if test="${requestScope.error != null}">
+                            <p class="text-danger">${requestScope.error}</p>
+                        </c:if>
+                        <c:if test="${requestScope.message != null}">
+                            <p class="text-danger">${requestScope.message}</p>
+                        </c:if>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-sm-6">
+                    <div class="register-container-form">
+                        <div class="logo d-flex justify-content-center align-items-center gap-2">
+                            <span><i class="fa-solid fa-paw"></i></span>
+                            <span>Pet-Care</span>
+                        </div> 
+                        <form autocomplete="off" action="<%=request.getContextPath()%>/register" method="post" enctype="multipart/form-data" style="margin-bottom: 48px">
+                            <div class="form-container form-container-icon d-flex align-items-center mb-4">
+                                <span class="icon"><i class="fa-solid fa-id-badge"></i></span>
+                                <input class="form-control ps-6" placeholder="Họ và tên" name="fullName" type="text" value="${user != null ? user.fullName: ''}" />
+                            </div>  
+                            <div class="form-container form-container-icon d-flex align-items-center mb-4">
+                                <span class="icon"><i class="fa-solid fa-user"></i></span>
+                                <input class="form-control ps-6" placeholder="Nhập tên đăng nhập" name="userName" type="text" required value="${user != null ? user.userName : ''}"/>
+                            </div>  
+                            <div class="form-container form-container-icon d-flex align-items-center mb-4">
+                                <span class="icon"><i class="fa-solid fa-envelope"></i> </span>
+                                <input class="form-control ps-6" placeholder="Email: username@gmail.com" name="email" type="email" required value="${user != null ? user.email : ''}"/>
+                            </div>  
+                            <div class="form-container form-container-icon d-flex align-items-center mb-4">
+                                <span class="icon"><i class="fa-solid fa-phone"></i></span>
+                                <input class="form-control ps-6" placeholder="Phone Number: 0xx or +84xx" name="phone" type="tel" value="${user != null ? user.phone : ''}"/>
+                            </div>  
+                            <div class="form-container form-container-icon d-flex align-items-center" style="margin-bottom: 48px">
+                                <span class="icon"><i class="fa-solid fa-lock"></i></span>  
+                                <input class="form-control ps-6" placeholder="Mật khẩu: tối đa 8 ký tự" name="password" type="password" required value="${user != null ? user.password : ''}" />
+                            </div>
+                            <button class="btn btn-primary-blue w-100" type="submit">Đăng ký</button>
+                        </form>
+                        <div>
+                            Bạn đã là thành viên của trung tâm?
+                            <a href="<%=request.getContextPath()%>/login" class="text-primary-blue fw-bold link-underline link-underline-opacity-0" >Đăng nhập</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <div class="overflow-hidden" style="margin: 0 calc(var(--bs-gutter-x) * -0.5)" >
+                        <img class="w-100 h-100" src="image/bg-register.jpg" alt="alt"/>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <p style="color:red;"><%= request.getAttribute("error") != null ? request.getAttribute("error") : ""%></p>
-        <p style="color:green;"><%= request.getAttribute("message") != null ? request.getAttribute("message") : ""%></p>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+        <script>
+            const toastEl = document.querySelector('.toast');
+            const toast = new bootstrap.Toast(toastEl);
 
-        <form action="<%=request.getContextPath()%>/register" method="post" enctype="multipart/form-data">
-            <table>
-                <tr><td>Tên đăng nhập*</td><td><input type="text" name="userName" required></td></tr>
-                <tr><td>Mật khẩu*</td><td><input type="password" name="password" required></td></tr>
-                <tr>
-                    <td>Giới tính</td>
-                    <td>
-                        <select name="gender">
-                            <option value="M">Nam</option>
-                            <option value="F">Nữ</option>
-                        </select>
-                    </td>
-                </tr>        <tr><td>Họ tên</td><td><input type="text" name="fullName"></td></tr>
-                <tr><td>Email</td><td><input type="email" name="email"></td></tr>
-                <tr><td>Điện thoại</td><td><input type="tel" name="phone"></td></tr>
-                <tr><td>Địa chỉ</td><td><input type="text" name="address"></td></tr>
-                <tr><td>Ảnh đại diện</td><td><input type="file" name="avatar" accept="image/*"></td></tr>
-                <tr><td colspan="2"><input type="submit" value="Đăng ký"></td></tr>
-            </table>
-        </form>
+            if (requestScope.error || requestScope.message) {
+                toast.show();
+            }
 
-        <p>Đã có tài khoản? <a href="<%=request.getContextPath()%>/login">Đăng nhập</a></p>
+        </script>
     </body>
 </html>

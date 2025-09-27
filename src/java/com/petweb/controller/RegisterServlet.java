@@ -13,28 +13,29 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-@WebServlet(urlPatterns = { "/register" })
-@MultipartConfig(maxFileSize = 16177215) 
+@WebServlet(urlPatterns = {"/register"})
+@MultipartConfig(maxFileSize = 16177215)
 public class RegisterServlet extends HttpServlet {
 
-    @Override protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        RequestDispatcher dispatcher =
-                this.getServletContext().getRequestDispatcher("/register.jsp");
+        RequestDispatcher dispatcher
+                = this.getServletContext().getRequestDispatcher("/register.jsp");
         dispatcher.forward(request, response);
     }
 
-    @Override protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    @Override  protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         Connection conn = MyUtils.getStoredConnection(request);
 
         String userName = request.getParameter("userName");
         String password = request.getParameter("password");
-        String gender   = request.getParameter("gender"); 
-        String email    = request.getParameter("email");
-        String phone    = request.getParameter("phone");
-        String address  = request.getParameter("address");
+        String gender = request.getParameter("gender");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+        String address = request.getParameter("address");
         String fullName = request.getParameter("fullName");
 
         Part filePart = request.getPart("avatar");
@@ -58,14 +59,12 @@ public class RegisterServlet extends HttpServlet {
         try {
             DBUtils.register(conn, newUser);
             request.setAttribute("message", "Đăng ký thành công! Vui lòng đăng nhập.");
-            RequestDispatcher dispatcher =
-                    this.getServletContext().getRequestDispatcher("/login.jsp");
-            dispatcher.forward(request, response);
+            response.sendRedirect("login.jsp");
         } catch (SQLException e) {
+            System.out.println("error");
             request.setAttribute("error", e.getMessage());
-            RequestDispatcher dispatcher =
-                    this.getServletContext().getRequestDispatcher("/register.jsp");
-            dispatcher.forward(request, response);
+            request.setAttribute("user", newUser);
+            request.getRequestDispatcher("register.jsp").forward(request, response);
         }
     }
 }

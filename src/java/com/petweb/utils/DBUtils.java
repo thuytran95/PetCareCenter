@@ -48,6 +48,23 @@ public class DBUtils {
         }
         return null;
     }
+    
+       // Đọc user theo userName
+    public static UserAccount findUser(Connection conn, int id) throws SQLException {
+        String sql = """
+            SELECT id, user_name, gender, password, email, phone, address, avatar, full_name,role
+            FROM user_account
+            WHERE id = ?
+        """;
+        try (PreparedStatement pstm = conn.prepareStatement(sql)) {
+            pstm.setInt(1, id);
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) return mapRow(rs);
+            }
+        }
+        return null;
+    }
+
 
     
     public static UserAccount register(Connection conn, UserAccount u) throws SQLException {
