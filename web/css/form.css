@@ -1,23 +1,43 @@
 .form-container {
-  border-radius: 16px;
-  padding: 4px 16px;
+    border-radius: 16px;
+    padding: 4px 16px;
 }
 
 .form-container-icon {
-  border: 1px solid var(--border-input);
-  overflow: hidden;
+    border: 1px solid var(--border-input);
+    overflow: hidden;
 }
 
 .form-container-icon .form-control:focus {
-  border: none;
+    border: none;
 }
 
 .form-container-icon .form-control {
-  border: none;
-  border-radius: 0;
+    border: none;
+    border-radius: 0;
 }
 
 form-container-icon .icon {
-  color: var(--text-input);
-  font-weight: 400;
+    color: var(--text-input);
+    font-weight: 400;
 }
+
+.form-container:focus-within{
+    background-color: transparent;
+}
+
+
+.form-container .form-control:focus{
+    background-color: transparent;
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow:0 0 0 50px white inset;
+    -webkit-text-fill-color: #333;
+}
+
+input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 50px white inset;
+    -webkit-text-fill-color: #333;
+}
+

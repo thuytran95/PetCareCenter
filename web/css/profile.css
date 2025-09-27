@@ -1,0 +1,62 @@
+.profile-header {
+  font-size: 32px;
+  font-weight: 500;
+  color: #171a1fff;
+  margin-bottom: 34px;
+}
+
+.profile-menu {
+  gap: 28px;
+  border-radius: 6px;
+  box-shadow: 0px 0px 1px #171a1f12, 0px 0px 2px #171a1f1f;
+  padding: 20px 20px 58px;
+}
+
+.circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #f1f8fd;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  text-align: center;
+}
+
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background-color: var(--primary-blue);
+  font-size: 32px;
+  color: white;
+}
+
+.btn-change-avatar {
+  color: #9095a1;
+  border-radius: 6px;
+  border: 1px solid #9095a1;
+  flex-shrink: 0;
+  background-color: white;
+  padding: 8px 12px;
+}
+
+.btn-submit {
+  background-color: #f1f8fd;
+  border: none;
+  border-radius: 6px;
+}
+
+.btn-submit:hover {
+  color: #379ae6;
+  background-color: #daecfa;
+}
+
+.profile-sub-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #171a1f;
+}
