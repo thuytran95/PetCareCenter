@@ -4,7 +4,7 @@
             <%@ page import="java.sql.Connection" %>
 
                 <% String userName=request.getParameter("userName"); Connection conn=ConnectionUtils.getConnection();
-                    UserAccount user=DBUtils.findUser(conn, userName); %>
+                    UserAccount user=DBUtils.findUser(conn, userName);%>
 
                     <!DOCTYPE html>
                     <html>

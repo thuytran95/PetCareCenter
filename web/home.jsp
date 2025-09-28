@@ -13,7 +13,6 @@
                 <link rel="stylesheet" href="css/header.css">
                 <link rel="stylesheet" href="css/footer.css" />
                 <link rel="stylesheet" href="css/home.css">
-
             </head>
 
             <body>
@@ -37,11 +36,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </section>
-                <section class="advertisement">
-                    <div class="w-100 overflow-hidden">
-                        <img class="object-fit w-100" src="image/banner2.png" alt="pet-care center banner" />
                     </div>
                 </section>
                 <section class="service">
