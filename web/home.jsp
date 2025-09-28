@@ -31,7 +31,7 @@
                                         <p>Chúng tôi chăm sóc thú cưng của bạn bằng tình yêu và sự tận tâm, luôn coi các
                                             bé như những người bạn nhỏ thân yêu trong gia đình.</p>
                                     </div>
-                                    <button class="btn btn-primary-blue">Đặt lịch ngay</button>
+                                    <a class="btn btn-primary-blue" href="booking.jsp">Đặt lịch ngay</a>
                                 </div>
                                 <div class="banner-image flex-grow">
                                     <img class="object-cover" src="image/banner.png" alt="banner" />
