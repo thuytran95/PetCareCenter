@@ -1,15 +1,12 @@
-function toggleInfo() {
-  const info = document.getElementById('team-info');
-  info.classList.toggle('show');
-}
-
-function openImage(src) {
-  const modal = document.getElementById("imageModal");
-  const modalImg = document.getElementById("modalImg");
-  modal.style.display = "block";
-  modalImg.src = src;
-}
-
-function closeImage() {
-  document.getElementById("imageModal").style.display = "none";
-}
+const avatar = document.querySelectorAll('.avatar');
+avatar.forEach((item) => {
+    item.addEventListener('click', () => {
+      const image = item.querySelector('img');     
+      const url = image.getAttribute('src');
+      const tile = image.getAttribute('alt');
+      const modalImage = document.querySelector('.modal-body img');
+      const modalTitle = document.querySelector('.modal-title');
+        modalTitle.innerText = tile;
+        modalImage.src = url;
+    }); 
+});
