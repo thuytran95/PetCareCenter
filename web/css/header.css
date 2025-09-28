@@ -85,3 +85,35 @@
   background-color: var(--light-blue);
   color: var(--primary-blue);
 }
+
+.circle {
+  width: 22px;
+  height: 22px;
+
+  border-radius: 50%;
+}
+
+.circle-primary-blue {
+  color: var(--primary-blue);
+  border: 1px solid var(--primary-blue);
+  font-size: 14px;
+}
+
+.header-account {
+  border: 1px solid #9095a1;
+  border-radius: 18px 0px 0px 18px;
+  padding: 8px;
+  height: 40px;
+}
+
+.header-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #9095a1;
+  border-left: none;
+  font-size: 12px;
+}
