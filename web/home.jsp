@@ -34,7 +34,7 @@
                                     <a class="btn btn-primary-blue" href="booking.jsp">Đặt lịch ngay</a>
                                 </div>
                                 <div class="banner-image flex-grow">
-                                    <img class="object-cover" src="image/banner.png" alt="banner" />
+                                    <img class="object-cover" src="image/banner.jpg" alt="banner" />
                                 </div>
                             </div>
                         </div>
