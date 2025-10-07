@@ -53,7 +53,7 @@
 
                 </div>
                 <div class="card-footer text-center">
-                    <a href="petProfile.jsp" class="btn btn-secondary">⬅ Quay lại trang chủ</a>
+                    <a href="booking.jsp" class="btn btn-secondary">⬅ Quay lại</a>
                 </div>
             </div>
         </div>

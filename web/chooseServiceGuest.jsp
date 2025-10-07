@@ -5,19 +5,17 @@
 
    if (petIdParam != null && !petIdParam.isEmpty()) {
        petId = Integer.parseInt(petIdParam);
-       session.setAttribute("petId", petId); // 👉 Cập nhật session luôn
+       session.setAttribute("petId", petId); // lưu luôn vào session
    } else {
        petId = (Integer) session.getAttribute("petId");
    }
-   
-
 %>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Chọn Dịch Vụ</title>
+    <title>Chọn Dịch Vụ Cho Pet</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
@@ -31,12 +29,11 @@
                 </div>
                 <div class="card-body">
 
-                    <!-- Thông tin Pet -->
-                    <p><b>Pet ID:</b> <span class="text-primary"><%= petId %></span></p>
+                    <p><b>🐾 Pet ID:</b> <span class="text-primary"><%= petId %></span></p>
 
-                    <!-- Form thêm dịch vụ -->
-                    <form action="BookingServlet" method="post" class="mb-4">
-                        <input type="hidden" name="action" value="add">
+                    <!-- 🧾 Form chọn loại dịch vụ -->
+                    <form action="GuestBookingServlet" method="post" class="mb-4">
+                        <input type="hidden" name="action" value="service">
                         <input type="hidden" name="petId" value="<%= petId %>">
 
                         <div class="mb-3">
@@ -49,24 +46,23 @@
                         </div>
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-success">+ Thêm dịch vụ</button>
+                            <button type="submit" class="btn btn-success">+ Đặt dịch vụ</button>
                         </div>
                     </form>
 
-                    <!-- Form kết thúc giao dịch -->
-                    <form action="BookingServlet" method="post">
+                    <!-- 🧾 Form kết thúc booking -->
+                    <form action="GuestBookingServlet" method="post">
                         <input type="hidden" name="action" value="finish">
                         <div class="d-grid">
                             <button type="submit" class="btn btn-danger">Kết thúc giao dịch</button>
                         </div>
                     </form>
 
-                    <!-- Thông báo -->
-                    <%
+                    <% 
                         String msg = request.getParameter("msg");
                         if (msg != null) {
                     %>
-                        <div class="alert alert-success mt-3"><%= msg %></div>
+                        <div class="alert alert-info mt-3"><%= msg %></div>
                     <% } %>
 
                 </div>

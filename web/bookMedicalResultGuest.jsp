@@ -1,14 +1,14 @@
-<%@page import="com.petweb.model.SpaDetail"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.petweb.model.SpaServiceItem" %>
+<%@ page import="com.petweb.model.MedicalServiceItem" %>
 <%@ page import="java.math.BigDecimal" %>
+<%@ page import="com.petweb.model.MedicalDetail" %>
 
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Kết quả đặt Spa</title>
+    <title>Kết quả đặt dịch vụ Y tế</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
@@ -17,15 +17,15 @@
     <div class="row justify-content-center">
         <div class="col-lg-8 col-md-10">
             <div class="card shadow-sm">
-                <div class="card-header bg-success text-white text-center">
-                    <h4 class="mb-0">✅ Kết quả đặt dịch vụ Spa</h4>
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">🏥 Kết quả đặt dịch vụ Y tế</h4>
                 </div>
                 <div class="card-body">
 
                     <%
-                        List<SpaServiceItem> selectedItems = (List<SpaServiceItem>) request.getAttribute("selectedItems");
+                        List<MedicalServiceItem> selectedItems = (List<MedicalServiceItem>) request.getAttribute("selectedItems");
                         BigDecimal totalPrice = (BigDecimal) request.getAttribute("totalPrice");
-                        SpaDetail spa = (SpaDetail) request.getAttribute("spa");
+                        MedicalDetail medical = (MedicalDetail) request.getAttribute("medical");
                         if(selectedItems == null || selectedItems.isEmpty()) {
                     %>
                         <div class="alert alert-warning text-center">
@@ -48,7 +48,7 @@
                                 <tbody>
                                 <%
                                     int index = 1;
-                                    for(SpaServiceItem item : selectedItems) {
+                                    for(MedicalServiceItem item : selectedItems) {
                                 %>
                                     <tr>
                                         <td><%= index++ %></td>
@@ -56,7 +56,7 @@
                                         <td class="text-danger fw-bold"><%= item.getItemPrice() %></td>
                                     </tr>
                                 <% } %>
-                                    <tr class="table-success">
+                                    <tr class="table-primary">
                                         <td colspan="2" class="fw-bold text-end">Tổng cộng</td>
                                         <td class="fw-bold text-danger"><%= totalPrice %> VNĐ</td>
                                     </tr>
@@ -64,14 +64,16 @@
                             </table>
                         </div>
 
-                        <!-- Ngày hẹn -->
-                        <p><b>📅 Ngày hẹn:</b> <span class="text-primary"><%= spa.getFormattedbookingDate() %></span></p>
+                        <!-- Ngày nhập viện -->
+                        <p><b>📅 Ngày nhập viện:</b> 
+                           <span class="text-primary"><%= medical.getFormattedAdmissionDate() %></span>
+                        </p>
 
                     <% } %>
 
                     <!-- Quay lại -->
                     <div class="d-flex justify-content-end mt-4">
-                        <a href="chooseService.jsp" class="btn btn-secondary">⬅ Quay lại đặt dịch vụ</a>
+                        <a href="chooseServiceGuest.jsp" class="btn btn-secondary">⬅ Quay lại đặt dịch vụ</a>
                     </div>
 
                 </div>

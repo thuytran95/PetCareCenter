@@ -29,6 +29,7 @@
                     <button class="btn btn-primary-blue w-100" type="submit">Đăng nhập</button>
                 </form>
                 <div>Bạn chưa chưa là thành viên của trung tâm? <a class="link-underline link-underline-opacity-0 text-primary-blue" href="<%=request.getContextPath()%>/register">Đăng ký</a></div>
+                <div>Đăng ký ko cần đăng nhập? <a class="link-underline link-underline-opacity-0 text-primary-blue" href="<%=request.getContextPath()%>/booking.jsp">Đăng ký</a></div>
             </div>
         </div>
     </body>
