@@ -16,6 +16,7 @@
     <meta charset="UTF-8">
     <title>Thêm Pet</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css" />
 </head>
 <body class="bg-light">
 
@@ -23,7 +24,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white text-center">
+                <div class="card-header bg-primary-blue text-white text-center">
                     <h4 class="mb-0">Thêm Pet mới</h4>
                 </div>
                 <div class="card-body">
@@ -76,12 +77,12 @@
                         <input type="hidden" name="userId" value="<%= user.getId() %>">
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-success">+ Thêm Pet</button>
+                            <button type="submit" class="btn btn-primary-blue">+ Thêm Pet</button>
                         </div>
                     </form>
                 </div>
                 <div class="card-footer text-center">
-                    <a href="<%=request.getContextPath()%>/petProfile.jsp" class="btn btn-link">← Quay lại danh sách</a>
+                    <a href="<%=request.getContextPath()%>/petProfile.jsp" class="link-underline link-underline-opacity-0 text-primary-blue">Quay lại danh sách</a>
                 </div>
             </div>
         </div>
