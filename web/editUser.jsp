@@ -23,6 +23,9 @@
     <jsp:include page="linkgroup.jsp"/>
     <link rel="stylesheet" href="css/common.css" />
     <link rel="stylesheet" href="css/profile.css" />
+      <link rel="stylesheet" href="css/header.css">
+      <link rel="stylesheet" href="css/form.css"/>
+      
 </head>
 
 <body>
@@ -70,7 +73,7 @@
                     </select>
                 </div>
 
-                <div class="form-container">
+                <div class="form-container mb-4">
                     <label>Điện thoại</label>
                     <input class="form-control" type="tel" name="phone" value="<%= user.getPhone()%>" />
                 </div>

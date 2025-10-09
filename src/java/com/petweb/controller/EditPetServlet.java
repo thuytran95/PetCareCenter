@@ -37,7 +37,7 @@ public class EditPetServlet extends HttpServlet {
                 request.setAttribute("pet", pet);
                 request.getRequestDispatcher("/editPet.jsp").forward(request, response);
             } else {
-                response.sendRedirect(request.getContextPath() + "/index.jsp");
+                response.sendRedirect(request.getContextPath() + "/petProfile.jsp");
             }
         } catch (Exception e) {
             throw new ServletException(e);
@@ -78,7 +78,7 @@ public class EditPetServlet extends HttpServlet {
             p.setIdentifyingMarks(getOrDefault(request.getParameter("identifyingMarks"), oldPet.getIdentifyingMarks()));
             
             HttpSession session = request.getSession();
-            UserAccount loginedUser = MyUtils.getLoginedUser(session);
+            UserAccount loginedUser = MyUtils.getLoginedUser(session);          
             if (loginedUser == null) {
                 response.sendRedirect(request.getContextPath() + "/login");
                 return;
@@ -93,7 +93,7 @@ public class EditPetServlet extends HttpServlet {
             }
 
             DBUtils.updatePet(conn, p);
-            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            response.sendRedirect(request.getContextPath() + "/petProfile.jsp");
 
         } catch (Exception e) {
             throw new ServletException(e);
