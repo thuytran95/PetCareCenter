@@ -44,6 +44,6 @@ public class DeletesPetServlet extends HttpServlet {
             request.getSession().setAttribute("error", "Không thể kết nối CSDL: " + ex.getMessage());
         }
 
-        response.sendRedirect(request.getContextPath() + "/index.jsp");
+        response.sendRedirect(request.getContextPath() + "/petProfile.jsp");
     }
 }

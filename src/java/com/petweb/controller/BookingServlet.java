@@ -22,6 +22,9 @@ public class BookingServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        String petName = (String) session.getAttribute("petName");
+        request.setAttribute("petName", petName); 
         // Hiển thị giao diện chọn dịch vụ
         request.getRequestDispatcher("chooseService.jsp").forward(request, response);
     }
@@ -42,8 +45,12 @@ public class BookingServlet extends HttpServlet {
         try (Connection conn = ConnectionUtils.getConnection()) {
             if ("add".equals(action)) {
                 int petId = Integer.parseInt(request.getParameter("petId"));
+                String petName = request.getParameter("petName");
                 String serviceType = request.getParameter("serviceType");
-
+                session.setAttribute("petId", petId);
+                if (petName != null && !petName.isEmpty()) {
+                    session.setAttribute("petName", petName);
+                }
                 // Kiểm tra bookingId và serviceId hiện tại trong session
                 Integer bookingId = (Integer) session.getAttribute("currentBookingId");
                 Integer serviceId = (Integer) session.getAttribute("serviceId");
@@ -87,7 +94,7 @@ public class BookingServlet extends HttpServlet {
                     // ✅ redirect về servlet InvoiceServlet
                     response.sendRedirect(request.getContextPath() + "/invoice?bookingId=" + bookingId);
                 } else {
-                    response.getWriter().println("<h3>Lỗi: Chưa có booking trong session!</h3>");
+                   request.getRequestDispatcher("/petProfile.jsp").forward(request, response);
                 }
             }
 

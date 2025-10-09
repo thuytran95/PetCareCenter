@@ -1,84 +1,68 @@
-<%@page contentType="text/html" pageEncoding="UTF-8" %>
-    <!DOCTYPE html>
-    <html>
+<%@page contentType="text/html; charset=UTF-8" %>
+<%@page import="java.util.List"%>
+<%@page import="com.petweb.utils.DBUtils, com.petweb.utils.ConnectionUtils, com.petweb.model.Pet" %>
+<%@page import="java.sql.Connection" %>
+<%@page import="java.util.Base64"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%
+    List<Pet> pets = null;
+    try (Connection conn = ConnectionUtils.getConnection()) {
+        // Nếu muốn theo userId thì viết queryPets(conn, userId)
+        pets = DBUtils.queryAllPets(conn);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+%>
 
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Pet profile</title>
-        <jsp:include page="linkgroup.jsp"></jsp:include>
-        <link rel="stylesheet" href="css/common.css" />
-        <link rel="stylesheet" href="css/profile.css" />
-    </head>
-
-    <body>
-        <div class="container pb-5">
-            <div>
-                <span class="text-body">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </span>
-                <a class="link-underline link-underline-opacity-0 text-body" href="#">Quay lại</a>
-            </div>
-            <div class="row">
-                <div class="col-12 col-sm-4">
-                    <jsp:include page="setting-common.jsp"></jsp:include>
-                </div>
-                <div class="col-12 col-sm-8">
-                    <form method="post" action="editUser" enctype="multipart/form-data" class="mb-5">
-                        <div class="d-flex align-items-end gap-3 mb-5">
-                            <div class="user-avatar">
-                                <i class="fa-solid fa-paw mx-auto"></i>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách Pet</title>
+    <jsp:include page="linkgroup.jsp"/>
+    <link rel="stylesheet" href="css/common.css"/>
+            <link rel="stylesheet" href="css/form.css"/>
+            <link rel="stylesheet" href="css/login.css"/>
+</head>
+<body>
+<jsp:include page="Header.jsp"/>
+<div class="container">
+    <h3 class="mb-4">Danh sách thú cưng</h3>
+    <div class="text-end m-3">
+    <a class="btn btn-success" href="<%=request.getContextPath()%>/addPet">+ Thêm thú cưng</a>
+    </div>
+    <% if (pets != null && !pets.isEmpty()) { %>
+        <div class="row">
+            <% for (Pet p : pets) { %>
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="card p-3 shadow-sm">
+                        <div class="d-flex align-items-center gap-3">
+                            <div>
+                                <% if (p.getPhoto() != null) { %>
+                                    <img src="data:image/png;base64,<%= Base64.getEncoder().encodeToString(p.getPhoto()) %>"
+                                         class="rounded-circle" width="70" height="70"/>
+                                <% } else { %>
+                                    <i class="fa-solid fa-paw fa-2x"></i>
+                                <% } %>
                             </div>
-                            <button type="button" class="w-fit h-fit btn-change-avatar">
-                                Thay đổi hình ảnh
-                            </button>
-                        </div>
-
-                        <div class="d-flex flex-column gap-4 mb-5">
-                            <div class="form-container">
-                                <label>Tên thú cưng</label>
-                                <input class="form-control" type="text" name="fullName" />
-                            </div>
-                            <div class="form-container">
-                                <label>Giới tính</label>
-                                <select class="form-select" name="gender">
-                                    <option value="F">Cái</option>
-                                    <option value="M">Đực</option>
-                                </select>
-                            </div>
-                            <div class="form-container">
-                                <label>Ngày sinh</label>
-                                <input class="form-control" type="date" name="phone" />
-                            </div>
-                            <div class="form-container">
-                                <label>Loài</label>
-                                <input class="form-control" type="text" />
-                            </div>
-                            <div class="form-container">
-                                <label>Giống</label>
-                                <input class="form-control" type="text" />
-                            </div>
-                            <div class="form-container">
-                                <label>Màu lông</label>
-                                <input class="form-control" type="text" />
-                            </div>
-                            <div class="form-container">
-                                <label>Đặt điểm nhận dạng</label>
-                                <input class="form-control" type="text" />
-                            </div>
-                            <div class="form-container">
-                                <label>Đặt điểm nhận dạng</label>
-                                <input class="form-control" type="text" />
-                            </div>
-                            <div class="form-container">
-                                <label>Ngày gia nhập thành viên</label>
-                                <input class="form-control" type="tel" name="text" value="20/09/2025" />
+                            <div>
+                                <h5><%= p.getName() %></h5>
+                                <p class="mb-1">Loài: <%= p.getSpecies() %></p>
+                                <p class="mb-1">Giống: <%= p.getBreed() %></p>
+                                <a class="btn btn-sm btn-primary" href="<%=request.getContextPath()%>/editPet?petId=<%= p.getPetId() %>">Sửa</a>
+                                <a class="btn btn-sm btn-primary" href="<%=request.getContextPath()%>/deletePet?petid=<%= p.getPetId() %>">Xóa</a>
+                                <a class="btn btn-sm btn-primary" href="BookingServlet?petId=<%= p.getPetId() %>">Booking</a>
                             </div>
                         </div>
-                        <button class="btn btn-submit text-primary-blue mx-auto d-block">Cập nhật</button>
-                    </form>
+                    </div>
                 </div>
-            </div>
+                            
+            <% } %>
         </div>
-    </body>
-
-    </html>
+    <% } else { %>
+        <p>Chưa có thú cưng nào.</p>
+    <% } %>
+</div>
+</body>
+</html>

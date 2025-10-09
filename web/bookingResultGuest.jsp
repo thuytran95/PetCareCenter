@@ -27,7 +27,7 @@
             <p class="fs-5 text-danger"><b>Tổng tiền: <%= tongTien.toPlainString() %> VND</b></p>
 
             <div class="mt-4 d-flex justify-content-center">
-                <a href="chooseService.jsp" class="btn btn-primary">
+                <a href="chooseServiceGuest.jsp" class="btn btn-primary">
                     ⬅ Về đặt dịch vụ khác
                 </a>
             </div>

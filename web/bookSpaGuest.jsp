@@ -28,7 +28,7 @@
                     %>
 
                     <!-- Form -->
-                    <form action="SpaBookingServlet" method="post">
+                    <form action="SpaBookingServletGuest" method="post">
 
                         <!-- Bảng dịch vụ -->
                         <div class="table-responsive mb-4">
@@ -68,7 +68,7 @@
 
                         <!-- Buttons -->
                         <div class="d-flex justify-content-between">
-                            <a href="chooseService.jsp" class="btn btn-secondary">⬅ Quay lại</a>
+                            <a href="chooseServiceGuest.jsp" class="btn btn-secondary">⬅ Quay lại</a>
                             <button type="submit" class="btn btn-success">Đặt Spa ✅</button>
                         </div>
 

@@ -95,7 +95,13 @@
                         <button class="btn btn-primary-blue w-50 mx-auto">Xác nhận đặt lịch</button>
                     </form>
                 </div>
-            </div>
+
+                                    <div class="text-center mt-4">
+                         <button type="submit" class="btn btn-primary px-4">
+                             Xác nhận & chọn dịch vụ
+                         </button>
+                     </div>
+            </form>
         </div>
     </body>
 

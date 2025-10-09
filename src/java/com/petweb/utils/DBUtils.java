@@ -103,6 +103,65 @@ public class DBUtils {
         }
         return u;
     }
+
+   public static UserAccount createGuestUser(Connection conn, String guestName, String guestPhone, String guestEmail) throws SQLException {
+    UserAccount guest = new UserAccount();
+
+    // 🔹 Sinh thông tin mặc định an toàn
+    String uuid = java.util.UUID.randomUUID().toString().substring(0, 8);
+
+    String generatedUserName = "guest_" + uuid;
+    String generatedEmail = (guestEmail != null && !guestEmail.trim().isEmpty())
+            ? guestEmail
+            : "guest_" + uuid + "@petweb.local";
+
+    String generatedPhone = (guestPhone != null && !guestPhone.trim().isEmpty())
+            ? guestPhone
+            : "0000" + (int) (Math.random() * 10000); // tạo số ngẫu nhiên 0000xxxx
+
+    String generatedFullName = (guestName != null && !guestName.trim().isEmpty())
+            ? guestName
+            : "Khách vãng lai";
+
+    guest.setUserName(generatedUserName);
+    guest.setGender("U");
+    guest.setPassword("guest123"); // mật khẩu giả định
+    guest.setEmail(generatedEmail);
+    guest.setPhone(generatedPhone);
+    guest.setAddress(null);
+    guest.setAvatar(null);
+    guest.setFullName(generatedFullName);
+    guest.setRole("GUEST");
+
+    String sql = """
+        INSERT INTO user_account (user_name, gender, password, email, phone, address, avatar, full_name, role)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        RETURNING id
+    """;
+
+    try (PreparedStatement pstm = conn.prepareStatement(sql)) {
+        pstm.setString(1, guest.getUserName());
+        pstm.setString(2, guest.getGender());
+        pstm.setString(3, guest.getPassword());
+        pstm.setString(4, guest.getEmail());
+        pstm.setString(5, guest.getPhone());
+        pstm.setNull(6, java.sql.Types.VARCHAR); // address
+        pstm.setNull(7, java.sql.Types.NULL);  // avatar
+        pstm.setString(8, guest.getFullName());
+        pstm.setString(9, guest.getRole());
+
+        try (ResultSet rs = pstm.executeQuery()) {
+            if (rs.next()) {
+                guest.setId(rs.getInt("id"));
+            }
+        }
+    }
+
+    return guest;
+}
+
+
+
    public static Pet insertPet(Connection conn, Pet p) throws SQLException {
     String sql = """
         INSERT INTO pet (name, species, breed, gender, dob, fur_color, identifying_marks, user_id, photo)
@@ -202,6 +261,21 @@ public class DBUtils {
         }
     }
 
+    public static List<Pet> queryAllPets(Connection conn) throws SQLException {
+    String sql = """
+        SELECT pet_id, name, species, breed, gender, dob, fur_color, identifying_marks, user_id, photo
+        FROM pet
+        ORDER BY pet_id
+    """;
+    List<Pet> list = new ArrayList<>();
+    try (PreparedStatement pstm = conn.prepareStatement(sql);
+         ResultSet rs = pstm.executeQuery()) {
+        while (rs.next()) {
+            list.add(mapRowPet(rs));
+        }
+    }
+    return list;
+}
 
     // Xóa user theo userName
     public static void deleteUser(Connection conn, String userName) throws SQLException {
@@ -735,4 +809,6 @@ public static void addBookingDetail(Connection conn, int serviceId, String servi
         ps.executeUpdate();
     }
 }
+
+
 }

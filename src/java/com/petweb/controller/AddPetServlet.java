@@ -55,7 +55,7 @@ public class AddPetServlet extends HttpServlet {
 
             DBUtils.insertPet(conn, p);
 
-            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            response.sendRedirect(request.getContextPath() + "/petProfile.jsp");
 
         } catch (Exception e) {
             throw new ServletException(e);

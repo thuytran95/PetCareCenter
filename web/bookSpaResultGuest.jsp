@@ -71,7 +71,7 @@
 
                     <!-- Quay lại -->
                     <div class="d-flex justify-content-end mt-4">
-                        <a href="chooseService.jsp" class="btn btn-secondary">⬅ Quay lại đặt dịch vụ</a>
+                        <a href="chooseServiceGuest.jsp" class="btn btn-secondary">⬅ Quay lại đặt dịch vụ</a>
                     </div>
 
                 </div>

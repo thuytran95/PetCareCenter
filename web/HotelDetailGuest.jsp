@@ -19,8 +19,8 @@
             <h3 class="mb-0">🐾 Đặt phòng khách sạn thú cưng</h3>
         </div>
         <div class="card-body p-4">
-            <form action="HotelServlet" method="post" class="needs-validation" novalidate>
-                <input type="hidden" name="serviceId" value="1">
+            <form action="HotelServletGuest" method="post" class="needs-validation" novalidate>
+               
 
                 <!-- Loại phòng -->
                 <div class="mb-3">
@@ -46,7 +46,7 @@
 
                 <!-- Nút hành động -->
                 <div class="d-flex justify-content-between">
-                    <a href="chooseService.jsp" class="btn btn-outline-secondary">
+                    <a href="chooseServiceGuest.jsp" class="btn btn-outline-secondary">
                         ⬅ Quay lại dịch vụ
                     </a>
                     <button type="submit" class="btn btn-success">

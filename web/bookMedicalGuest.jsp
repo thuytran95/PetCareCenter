@@ -29,13 +29,13 @@
                         String admissionDate = now.toString().substring(0,16);
 
                         if (allItems == null || allItems.isEmpty()) {
-                            response.sendRedirect("chooseService.jsp");
+                            response.sendRedirect("chooseServiceGuest.jsp");
                             return;
                         }
                     %>
 
                     <!-- Form đăng ký -->
-                    <form action="MedicalBookingServlet" method="post">
+                    <form action="MedicalBookingServletGuest" method="post">
                         <div class="table-responsive mb-4">
                             <table class="table table-bordered align-middle">
                                 <thead class="table-light">
@@ -68,7 +68,7 @@
 
                         <!-- Nút hành động -->
                         <div class="d-flex justify-content-between">
-                            <a href="chooseService.jsp" class="btn btn-secondary">⬅ Quay lại</a>
+                            <a href="chooseServiceGuest.jsp" class="btn btn-secondary">⬅ Quay lại</a>
                             <button type="submit" class="btn btn-danger">Đăng ký</button>
                         </div>
                     </form>
