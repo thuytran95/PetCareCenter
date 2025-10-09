@@ -54,8 +54,6 @@ public class LoginServlet extends HttpServlet {
         if (error != null) {
             request.setAttribute("error", error);
             request.getRequestDispatcher("/login.jsp").forward(request, response);
-            
-
             return;
         }
         // login ok
@@ -71,8 +69,8 @@ public class LoginServlet extends HttpServlet {
             MyUtils.deleteUserCookie(response);
         }
 
-        // Nếu là admin → chuyển tới trang danh sách user, còn user bình thường → index.jsp
-        response.sendRedirect(request.getContextPath() + "/index.jsp");
+        // Nếu là admin → chuyển tới trang danh sách user, còn user bình thường → home.jsp
+        response.sendRedirect(request.getContextPath() + "/home.jsp");
 
     }
 }
