@@ -9,12 +9,12 @@
     </head>
 
     <body>
-        <div class="container pb-5">
+        <div class="container py-5">
             <div>
                 <span class="text-body">
                     <i class="fa-solid fa-chevron-left"></i>
                 </span>
-                <a class="link-underline link-underline-opacity-0 text-body" href="#">Quay lại</a>
+                <button class="text-body btn" onclick="history.back()">Quay lại</button>
             </div>
             <div class="row">
                 <div class="col-12 col-sm-4">

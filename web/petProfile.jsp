@@ -29,7 +29,7 @@
 
     <body>
         <jsp:include page="Header.jsp" />
-        <div class="container">
+        <div class="container pb-5">
             <h3 class="mb-4">Danh sách thú cưng</h3>
             <div class="text-end m-3">
                 <a class="btn btn-success" href="<%=request.getContextPath()%>/addPet">+

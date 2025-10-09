@@ -1,25 +1,25 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
-    <!DOCTYPE html>
-    <html>
+<!DOCTYPE html>
+<html>
 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cài đặt thông báo</title>
         <jsp:include page="linkgroup.jsp"></jsp:include>
-        <link rel="stylesheet" href="css/common.css" />
-        <link rel="stylesheet" href="css/profile.css" />
-    </head>
+            <link rel="stylesheet" href="css/common.css" />
+            <link rel="stylesheet" href="css/profile.css" />
+        </head>
 
-    <body>
-        <div class="container pb-5">
-            <div>
-                <span class="text-body">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </span>
-                <a class="link-underline link-underline-opacity-0 text-body" href="#">Quay lại</a>
-            </div>
-            <div class="row">
-                <div class="col-12 col-sm-4">
+        <body>
+            <div class="container py-5">
+                <div>
+                    <span class="text-body">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </span>
+                    <button class="text-body btn" onclick="history.back()">Quay lại</button>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-4">
                     <jsp:include page="setting-common.jsp"></jsp:include>
                 </div>
                 <div class="col-12 col-sm-8">
@@ -49,4 +49,4 @@
         </div>
     </body>
 
-    </html>
+</html>
