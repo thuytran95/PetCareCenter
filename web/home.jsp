@@ -126,7 +126,7 @@
                                     <div class="d-flex flex-column align-items-center">
                                         <div class="avatar mb-3">
                                             <a href="#" data-bs-toggle="modal" data-bs-target="#myModal">
-                                                <img src="image/hoangvanbinh.jpg" alt="Binh" class="rounded-circle"
+                                                <img src="image/hoangvanbinh.jpg" alt="Hoàng Văn Bình" class="rounded-circle"
                                                     style="width: 84px; height: 84px; object-fit: cover;">
                                             </a>
                                         </div>
