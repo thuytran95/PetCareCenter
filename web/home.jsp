@@ -22,21 +22,94 @@
 <body>
     <jsp:include page="Header.jsp"></jsp:include>
     <section class="banner">
-        <div class="container">
-            <div class="row">
-                <div class="d-flex flex-lg-row flex-column">
-                    <div class="w-20">
-                        <div class="heading mb-4">Nơi thú cưng được yêu thương trọn vẹn</div>
-                        <div class="banner-content text-justify">
-                            <p>Trung tâm Chăm sóc thú cưng là nơi gửi gắm yêu thương để thú cưng luôn khỏe
-                                mạnh, hạnh phúc và được nâng niu.</p>
-                            <p>Chúng tôi chăm sóc thú cưng của bạn bằng tình yêu và sự tận tâm, luôn coi các
-                                bé như những người bạn nhỏ thân yêu trong gia đình.</p>
-                        </div>
-                        <a class="btn btn-primary-blue" href="<%=request.getContextPath()%>/BookingServlet">Đặt lịch ngay</a>
+        <span class="banner-blob banner-blob--1" aria-hidden="true"></span>
+        <span class="banner-blob banner-blob--2" aria-hidden="true"></span>
+        <div class="container position-relative">
+            <div class="row align-items-center g-5">
+                <div class="col-12 col-lg-6">
+                    <span class="banner-eyebrow">
+                        <i class="fa-solid fa-paw"></i> Trung tâm chăm sóc thú cưng tận tâm
+                    </span>
+                    <h1 class="banner-title">
+                        Nơi thú cưng được <span class="banner-title-mark">yêu thương</span> trọn vẹn
+                    </h1>
+                    <div class="banner-content">
+                        <p>Trung tâm Chăm sóc thú cưng là nơi gửi gắm yêu thương để thú cưng luôn khỏe mạnh,
+                            hạnh phúc và được nâng niu như những người bạn nhỏ trong gia đình.</p>
                     </div>
-                    <div class="banner-image flex-grow banner-image-frame">
-                        <img class="object-cover" src="image/banner.jpg" alt="banner" />
+                    <div class="banner-actions">
+                        <a class="btn btn-primary-blue" href="<%=request.getContextPath()%>/BookingServlet">
+                            Đặt lịch ngay <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </a>
+                        <a class="btn btn-outline-blue" href="#dich-vu">Khám phá dịch vụ</a>
+                    </div>
+                    <ul class="banner-stats">
+                        <li>
+                            <strong>1.200+</strong>
+                            <span>Thú cưng được chăm sóc</span>
+                        </li>
+                        <li>
+                            <strong>15+</strong>
+                            <span>Bác sĩ &amp; kỹ thuật viên</span>
+                        </li>
+                        <li>
+                            <strong>4.9/5</strong>
+                            <span>Đánh giá từ khách hàng</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="banner-image banner-image-frame">
+                        <img class="object-cover" src="image/banner.jpg"
+                            alt="Thú cưng được chăm sóc tại trung tâm" />
+                        <div class="banner-float banner-float--rating">
+                            <span class="banner-float-icon bg-amber-tint text-amber">
+                                <i class="fa-solid fa-star"></i>
+                            </span>
+                            <div>
+                                <strong>4.9/5 sao</strong>
+                                <span>Hơn 800 lượt đánh giá</span>
+                            </div>
+                        </div>
+                        <div class="banner-float banner-float--care">
+                            <span class="banner-float-icon bg-teal-tint text-teal">
+                                <i class="fa-solid fa-user-doctor"></i>
+                            </span>
+                            <div>
+                                <strong>Bác sĩ trực 24/7</strong>
+                                <span>Luôn sẵn sàng hỗ trợ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="banner-trust">
+                <div class="banner-trust-item">
+                    <span class="banner-trust-icon bg-pink-tint text-pink">
+                        <i class="fa-solid fa-heart"></i>
+                    </span>
+                    <div>
+                        <h3>Chăm sóc tận tâm</h3>
+                        <p>Đội ngũ giàu kinh nghiệm, yêu thương các bé như thú cưng của chính mình.</p>
+                    </div>
+                </div>
+                <div class="banner-trust-item">
+                    <span class="banner-trust-icon bg-blue-tint text-blue">
+                        <i class="fa-regular fa-calendar-check"></i>
+                    </span>
+                    <div>
+                        <h3>Đặt lịch online</h3>
+                        <p>Chọn dịch vụ và khung giờ phù hợp chỉ trong vài bước, không cần chờ đợi.</p>
+                    </div>
+                </div>
+                <div class="banner-trust-item">
+                    <span class="banner-trust-icon bg-purple-tint text-purple">
+                        <i class="fa-solid fa-notes-medical"></i>
+                    </span>
+                    <div>
+                        <h3>Hồ sơ sức khỏe</h3>
+                        <p>Lưu lại lịch sử khám, tiêm phòng để theo dõi sức khỏe các bé trọn đời.</p>
                     </div>
                 </div>
             </div>
@@ -260,7 +333,7 @@
         </div>
     </section>
     <% } %>
-    <section class="service">
+    <section class="service" id="dich-vu">
         <div class="container">
             <div class="row">
                 <div class="col-12 col-lg-6">
@@ -632,8 +705,7 @@
     </section>
 
     <jsp:include page="Footer.jsp"></jsp:include>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>
     <script src="js/pet-slider.js"></script>
 </body>

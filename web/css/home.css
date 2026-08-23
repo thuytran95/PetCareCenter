@@ -1,30 +1,119 @@
 @import "common.css";
 
+/* ===== Hero trang chủ =====================================================
+   Bố cục 2 cột: cột chữ (nhãn + tiêu đề + CTA + số liệu) và cột ảnh có thẻ nổi.
+   Bên dưới là dải 3 điểm mạnh để phần đầu trang không bị trống.
+   ------------------------------------------------------------------------ */
 .banner {
-  padding: 120px 0 100px;
+  position: relative;
+  padding: 72px 0 88px;
+  overflow: hidden;
+}
+
+/* Hai mảng màu mờ trang trí ở góc, nằm dưới toàn bộ nội dung */
+.banner-blob {
+  position: absolute;
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.banner-blob--1 {
+  width: 320px;
+  height: 320px;
+  top: -130px;
+  left: -110px;
+  background: radial-gradient(circle at 35% 35%, var(--amber-tint), transparent 70%);
+}
+
+.banner-blob--2 {
+  width: 400px;
+  height: 400px;
+  bottom: -180px;
+  right: -130px;
+  background: radial-gradient(circle at 35% 35%, var(--pink-tint), transparent 70%);
+}
+
+.banner-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--light-blue);
+  border: 1px solid #ffd3c2;
+  color: var(--primary-blue);
+  font-size: 13.5px;
+  font-weight: 600;
 }
 
 .banner-title {
   font-size: 52px;
   font-weight: 700;
+  line-height: 1.15;
   color: #323743;
   font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  margin: 18px 0 16px;
+}
+
+/* Nét highlight vàng dưới từ khoá — dùng gradient nên không cần z-index */
+.banner-title-mark {
+  color: var(--primary-blue);
+  background: linear-gradient(transparent 66%, var(--amber-tint) 0);
 }
 
 .banner-content {
-  font-size: 18px;
+  font-size: 17px;
   color: var(--text-body);
-  margin-bottom: 64px;
+  line-height: 1.65;
+  margin-bottom: 28px;
+  max-width: 46ch;
+}
+
+.banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.banner .btn {
+  min-width: 200px;
+  padding: 14px 28px;
+  font-weight: 600;
+}
+
+.banner-stats {
+  list-style: none;
+  margin: 0;
+  padding: 22px 0 0;
+  border-top: 1px solid var(--border-warm);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 40px;
+}
+
+.banner-stats strong {
+  display: block;
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-size: 26px;
+  line-height: 1.2;
+  color: #323743;
+}
+
+.banner-stats span {
+  font-size: 13px;
+  color: var(--text-body);
 }
 
 .banner-image {
   width: 100%;
-  overflow: hidden;
 }
 
 .banner-image img {
+  width: 100%;
   object-fit: cover;
-  height: 400px;
+  height: clamp(300px, 40vw, 430px);
   border-radius: 32px;
   position: relative;
   z-index: 1;
@@ -56,10 +145,130 @@
   z-index: 0;
 }
 
-.banner .btn {
-  min-width: 220px;
-  padding: 14px 28px;
-  font-weight: 600;
+/* Thẻ nhỏ nổi trên ảnh, trôi nhẹ lên xuống */
+.banner-float {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #fff;
+  border: 1px solid var(--border-warm);
+  border-radius: 16px;
+  box-shadow: 0 10px 26px rgba(23, 26, 31, 0.1);
+  animation: bannerFloat 4.5s ease-in-out infinite;
+}
+
+.banner-float--rating {
+  top: 26px;
+  left: -20px;
+  animation-delay: -1.4s;
+}
+
+.banner-float--care {
+  bottom: 28px;
+  right: -16px;
+}
+
+.banner-float-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.banner-float strong {
+  display: block;
+  font-size: 14px;
+  color: #323743;
+  line-height: 1.3;
+}
+
+.banner-float span {
+  font-size: 12px;
+  color: var(--text-body);
+}
+
+@keyframes bannerFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-9px); }
+}
+
+/* Dải 3 điểm mạnh dưới hero */
+.banner-trust {
+  margin-top: 60px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.banner-trust-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid var(--border-warm);
+  border-radius: 18px;
+  box-shadow: 0px 0px 1px #171a1f12, 0px 0px 2px #171a1f1f;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.banner-trust-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 26px rgba(23, 26, 31, 0.08);
+}
+
+.banner-trust-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  flex: 0 0 auto;
+}
+
+.banner-trust-item h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #323743;
+  margin: 0 0 4px;
+}
+
+.banner-trust-item p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-body);
+}
+
+@media (max-width: 991.98px) {
+  .banner { padding: 48px 0 64px; }
+  .banner-title { font-size: 38px; }
+  .banner-trust { grid-template-columns: 1fr; margin-top: 44px; }
+  .banner-float--rating { left: 10px; }
+  .banner-float--care { right: 10px; }
+}
+
+@media (max-width: 575.98px) {
+  .banner-title { font-size: 31px; }
+  .banner-content { font-size: 15.5px; }
+  .banner-actions .btn { min-width: 100%; }
+  .banner-stats { gap: 14px 26px; }
+  .banner-stats strong { font-size: 22px; }
+  .banner-float { padding: 10px 12px; }
+}
+
+/* Tôn trọng thiết lập giảm chuyển động của hệ điều hành */
+@media (prefers-reduced-motion: reduce) {
+  .banner-float { animation: none; }
+  .banner-trust-item:hover { transform: none; }
 }
 
 /* section service */
