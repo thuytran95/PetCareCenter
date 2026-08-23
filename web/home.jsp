@@ -62,22 +62,95 @@
                     <div class="banner-image banner-image-frame">
                         <img class="object-cover" src="image/banner.jpg"
                             alt="Thú cưng được chăm sóc tại trung tâm" />
-                        <div class="banner-float banner-float--rating">
-                            <span class="banner-float-icon bg-amber-tint text-amber">
-                                <i class="fa-solid fa-star"></i>
-                            </span>
-                            <div>
-                                <strong>4.9/5 sao</strong>
-                                <span>Hơn 800 lượt đánh giá</span>
+                        <div class="banner-float-anchor banner-float--rating">
+                            <div class="banner-float">
+                                <span class="banner-float-icon bg-amber-tint text-amber">
+                                    <i class="fa-solid fa-star"></i>
+                                </span>
+                                <span class="banner-float-text">
+                                    <strong>4.9/5 sao</strong>
+                                    <span>Hơn 800 lượt đánh giá</span>
+                                </span>
                             </div>
                         </div>
-                        <div class="banner-float banner-float--care">
-                            <span class="banner-float-icon bg-teal-tint text-teal">
-                                <i class="fa-solid fa-user-doctor"></i>
-                            </span>
-                            <div>
-                                <strong>Bác sĩ trực 24/7</strong>
-                                <span>Luôn sẵn sàng hỗ trợ</span>
+
+                        <%-- Thẻ này bấm được: mở bong bóng liên hệ ngay bên cạnh --%>
+                        <div class="banner-float-anchor banner-float--care" data-contact>
+                            <button type="button" class="banner-float banner-float-btn"
+                                data-contact-toggle aria-expanded="false" aria-controls="contactBubble">
+                                <span class="banner-float-icon bg-teal-tint text-teal">
+                                    <i class="fa-solid fa-user-doctor"></i>
+                                </span>
+                                <span class="banner-float-text">
+                                    <strong>Bác sĩ trực 24/7</strong>
+                                    <span>Bấm để xem liên hệ</span>
+                                </span>
+                                <i class="fa-solid fa-chevron-up banner-float-caret" aria-hidden="true"></i>
+                            </button>
+
+                            <div class="contact-bubble" id="contactBubble" data-contact-bubble hidden>
+                                <div class="contact-bubble-head">
+                                    <span class="banner-float-icon bg-teal-tint text-teal">
+                                        <i class="fa-solid fa-headset"></i>
+                                    </span>
+                                    <span class="banner-float-text">
+                                        <strong>Hỗ trợ 24/7</strong>
+                                        <span>Trực cả cuối tuần &amp; ngày lễ</span>
+                                    </span>
+                                    <button type="button" class="contact-bubble-close" data-contact-close
+                                        aria-label="Đóng">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+
+                                <ul class="contact-list">
+                                    <li>
+                                        <a href="tel:19008386">
+                                            <span class="contact-ico bg-teal-tint text-teal">
+                                                <i class="fa-solid fa-phone"></i>
+                                            </span>
+                                            <span class="contact-label">Hotline
+                                                <small>1900 1111</small>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://zalo.me/0912345678" target="_blank" rel="noopener">
+                                            <span class="contact-ico bg-blue-tint text-blue">
+                                                <i class="fa-solid fa-comment-dots"></i>
+                                            </span>
+                                            <span class="contact-label">Zalo
+                                                <small>0111 111 111</small>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://www.facebook.com/petcarecenter.vn" target="_blank"
+                                            rel="noopener">
+                                            <span class="contact-ico bg-purple-tint text-purple">
+                                                <i class="fa-brands fa-facebook-f"></i>
+                                            </span>
+                                            <span class="contact-label">Facebook
+                                                <small>Pet Care Center</small>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="mailto:hotro@petcarecenter.vn">
+                                            <span class="contact-ico bg-amber-tint text-amber">
+                                                <i class="fa-regular fa-envelope"></i>
+                                            </span>
+                                            <span class="contact-label">Email
+                                                <small>hotro@petcarecenter.vn</small>
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <p class="contact-note">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    Địa chỉ: 78 Tô Ngọc Vân, Phường Tây Hồ, Thành phố Hà Nội
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -708,6 +781,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>
     <script src="js/pet-slider.js"></script>
+    <script src="js/contact-bubble.js"></script>
 </body>
 
 </html>
