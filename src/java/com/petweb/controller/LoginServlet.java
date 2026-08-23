@@ -10,10 +10,13 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(LoginServlet.class.getName());
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -30,6 +33,9 @@ public class LoginServlet extends HttpServlet {
         boolean remember = "Y".equals(rememberMeStr);
 
         Connection conn = MyUtils.getStoredConnection(request);
+        if (conn == null) {
+            throw new ServletException("Không có kết nối CSDL cho request này");
+        }
 
         String error = null;
         UserAccount user = null;
@@ -47,7 +53,8 @@ public class LoginServlet extends HttpServlet {
                     user = null; // không lưu session
                 }
             } catch (SQLException e) {
-                throw new ServletException(e);
+                LOGGER.log(Level.SEVERE, "Lỗi khi đăng nhập userName=" + userName, e);
+                error = "Có lỗi xảy ra, vui lòng thử lại sau!";
             }
         }
 
@@ -69,8 +76,6 @@ public class LoginServlet extends HttpServlet {
             MyUtils.deleteUserCookie(response);
         }
 
-        // Nếu là admin → chuyển tới trang danh sách user, còn user bình thường → home.jsp
-        response.sendRedirect(request.getContextPath() + "/home.jsp");
-
+        response.sendRedirect(request.getContextPath() + "/home");
     }
 }

@@ -1,0 +1,530 @@
+@import "common.css";
+
+/* ===== Layout chung cho các trang dịch vụ (spa / khách sạn / y tế) ===== */
+body.service-page {
+  background: var(--bg-warm);
+}
+
+.service-shell {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.service-card {
+  background: white;
+  border: 1px solid var(--border-warm);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 24px 48px -22px rgba(43, 36, 32, 0.14);
+}
+
+.service-stripe {
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--pink),
+    var(--primary-blue),
+    var(--amber),
+    var(--teal),
+    var(--blue)
+  );
+}
+
+.service-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 36px 8px;
+}
+
+.service-head-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.service-title {
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  margin: 0;
+  color: #292524;
+}
+
+.service-subtitle {
+  color: var(--text-body);
+  font-size: 14px;
+  margin: 2px 0 0;
+}
+
+.service-body {
+  padding: 24px 36px 36px;
+}
+
+.service-section-label {
+  text-transform: uppercase;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--text-body);
+  margin-bottom: 12px;
+}
+
+/* ===== Danh sách dịch vụ dạng thẻ chọn ===== */
+.item-list {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.item-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1.5px solid var(--border-warm);
+  border-radius: 16px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s, transform 0.15s;
+  margin: 0;
+}
+
+.item-option:hover {
+  transform: translateY(-2px);
+}
+
+.item-option input {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  accent-color: var(--primary-blue);
+  margin: 0;
+  cursor: pointer;
+}
+
+.item-name {
+  flex: 1;
+  font-weight: 600;
+  font-size: 14.5px;
+  color: #292524;
+}
+
+.item-price {
+  font-weight: 700;
+  font-size: 14.5px;
+  white-space: nowrap;
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+}
+
+.item-empty {
+  border: 1.5px dashed var(--border-warm);
+  border-radius: 16px;
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--text-body);
+}
+
+/* ===== Ô nhập ngày giờ ===== */
+.service-body .form-control,
+.service-body .form-select {
+  border: 1.5px solid var(--border-warm);
+  border-radius: 14px;
+  padding: 13px 16px;
+  font-size: 14.5px;
+  color: #292524;
+}
+
+.service-body .form-control:focus,
+.service-body .form-select:focus {
+  border-color: var(--primary-blue);
+  box-shadow: none;
+}
+
+/* ===== Nút ===== */
+.service-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.btn-service {
+  border-radius: 999px;
+  font-weight: 600;
+  padding: 14px 28px;
+  border: none;
+  color: white;
+  background-color: var(--primary-blue); /* mặc định khi trang không gắn theme màu */
+  flex: 1;
+  transition: filter 0.15s, transform 0.15s;
+}
+
+.btn-service:hover {
+  color: white;
+  filter: brightness(0.93);
+}
+
+.btn-service:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-back {
+  border-radius: 999px;
+  font-weight: 600;
+  padding: 14px 28px;
+  border: 1.5px solid var(--border-warm);
+  background: white;
+  color: var(--text-body);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-back:hover {
+  background: var(--bg-warm);
+  color: var(--text-body);
+}
+
+/* ===== Thông báo lỗi ===== */
+.service-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--pink-tint);
+  color: var(--pink);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-bottom: 22px;
+}
+
+/* ===== Biến thể màu theo từng loại dịch vụ ===== */
+.theme-spa .service-head-icon { background: var(--pink-tint); color: var(--pink); }
+.theme-spa .item-price { color: var(--pink); }
+.theme-spa .item-option:has(input:checked) { border-color: var(--pink); background: var(--pink-tint); }
+.theme-spa .item-option input { accent-color: var(--pink); }
+.theme-spa .btn-service { background-color: var(--pink); }
+
+.theme-hotel .service-head-icon { background: var(--blue-tint); color: var(--blue); }
+.theme-hotel .item-price { color: var(--blue); }
+.theme-hotel .item-option:has(input:checked) { border-color: var(--blue); background: var(--blue-tint); }
+.theme-hotel .item-option input { accent-color: var(--blue); }
+.theme-hotel .btn-service { background-color: var(--blue); }
+
+.theme-medical .service-head-icon { background: var(--teal-tint); color: var(--teal); }
+.theme-medical .item-price { color: var(--teal); }
+.theme-medical .item-option:has(input:checked) { border-color: var(--teal); background: var(--teal-tint); }
+.theme-medical .item-option input { accent-color: var(--teal); }
+.theme-medical .btn-service { background-color: var(--teal); }
+
+/* ===== Trang kết quả ===== */
+.result-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 18px;
+  padding: 20px 24px;
+  margin-top: 8px;
+}
+
+.result-total-label {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.result-total-value {
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+}
+
+.result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border-warm);
+  font-size: 14.5px;
+}
+
+.result-row:last-of-type {
+  border-bottom: none;
+}
+
+.result-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--teal-tint);
+  color: var(--teal);
+}
+
+/* ===== Chi tiết dòng trong hóa đơn ===== */
+.invoice-line {
+  border: 1px solid var(--border-warm);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 10px;
+}
+
+.invoice-sub {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px dashed var(--border-warm);
+}
+
+.invoice-sub li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-body);
+  padding: 3px 0;
+}
+
+/* ===================================================================
+   Bố cục 2 cột: form dịch vụ bên trái, bảng tạm tính bên phải
+   =================================================================== */
+.booking-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  align-items: start;
+  max-width: 1060px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (max-width: 991px) {
+  .booking-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .summary-panel {
+    position: static !important;
+  }
+}
+
+.booking-layout .service-shell {
+  max-width: none;
+}
+
+/* ===== Bảng tạm tính ===== */
+.summary-panel {
+  position: sticky;
+  top: 24px;
+  background: white;
+  border: 1px solid var(--border-warm);
+  border-radius: 24px;
+  padding: 22px;
+  box-shadow: 0 20px 40px -24px rgba(43, 36, 32, 0.16);
+}
+
+.summary-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: #292524;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-warm);
+}
+
+.summary-head i {
+  color: var(--amber);
+}
+
+.summary-pet {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-warm);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-body);
+  margin-top: 14px;
+}
+
+.summary-section-title {
+  text-transform: uppercase;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-input);
+  margin: 18px 0 8px;
+}
+
+.summary-line {
+  border: 1px solid var(--border-warm);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  font-size: 13.5px;
+}
+
+.summary-line-meta {
+  font-size: 12px;
+  color: var(--text-body);
+  margin-top: 2px;
+}
+
+.summary-sub,
+.summary-live ul {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 8px 0 0;
+  border-top: 1px dashed var(--border-warm);
+}
+
+.summary-sub li,
+.summary-live li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--text-body);
+  padding: 3px 0;
+}
+
+.summary-live li span:last-child {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.summary-live ul {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.summary-empty {
+  border: 1.5px dashed var(--border-warm);
+  border-radius: 14px;
+  padding: 16px 12px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--text-input);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-body);
+  padding: 7px 0;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-warm);
+  font-weight: 700;
+}
+
+.summary-total span:first-child {
+  font-size: 14px;
+  color: #292524;
+}
+
+.summary-total span:last-child {
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-size: 22px;
+  color: var(--primary-blue);
+}
+
+.summary-note {
+  font-size: 11.5px;
+  color: var(--text-input);
+  margin: 14px 0 0;
+  line-height: 1.5;
+}
+
+/* ===================================================================
+   Hóa đơn: trạng thái, mã tra cứu, lịch sử thông báo
+   =================================================================== */
+.inv-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.inv-code {
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.14em;
+  color: var(--primary-blue);
+  background: var(--light-blue);
+  border-radius: 8px;
+  padding: 3px 12px;
+}
+
+.inv-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--bg-warm);
+  border: 1px dashed var(--border-warm);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-body);
+  margin-bottom: 22px;
+}
+
+.inv-tip i {
+  color: var(--primary-blue);
+  margin-top: 2px;
+}
+
+/* ----- Một dòng thông báo đã gửi ----- */
+.inv-noti {
+  display: flex;
+  gap: 12px;
+  border: 1px solid var(--border-warm);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+
+.inv-noti-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.inv-noti-body {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-body);
+  margin-top: 4px;
+  word-break: break-word;
+}

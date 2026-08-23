@@ -1,4 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%!
+    /** Thẻ biểu thức JSP in ra chữ "null" khi giá trị là null, và chuỗi đó bị lưu vào CSDL khi bấm Lưu. */
+    private String nz(Object v) { return v == null ? "" : String.valueOf(v); }
+%>
     <%@ page import="com.petweb.model.Pet, java.util.Base64" %>
 
         <% Pet pet=(Pet) request.getAttribute("pet"); if (pet==null) { response.sendRedirect("index.jsp"); return; } %>
@@ -39,18 +43,18 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Tên</label>
-                                <input type="text" class="form-control" name="name" value="<%= pet.getName() %>" />
+                                <input type="text" class="form-control" name="name" value="<%= nz(pet.getName()) %>" />
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Loài</label>
                                 <input type="text" class="form-control" name="species"
-                                    value="<%= pet.getSpecies() %>" />
+                                    value="<%= nz(pet.getSpecies()) %>" />
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Giống</label>
-                                <input type="text" class="form-control" name="breed" value="<%= pet.getBreed() %>" />
+                                <input type="text" class="form-control" name="breed" value="<%= nz(pet.getBreed()) %>" />
                             </div>
 
                             <div class="mb-3">
@@ -70,13 +74,13 @@
                             <div class="mb-3">
                                 <label class="form-label">Màu lông</label>
                                 <input type="text" class="form-control" name="furColor"
-                                    value="<%= pet.getFurColor() %>" />
+                                    value="<%= nz(pet.getFurColor()) %>" />
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Đặc điểm nhận dạng</label>
                                 <input type="text" class="form-control" name="identifyingMarks"
-                                    value="<%= pet.getIdentifyingMarks() %>" />
+                                    value="<%= nz(pet.getIdentifyingMarks()) %>" />
                             </div>
 
                             <div class="mb-4">
@@ -85,12 +89,13 @@
                             </div>
 
                             <div class="d-flex justify-content-between">
-                                <a href="petProfile.jsp" class="btn btn-outline-secondary">Quay lại</a>
+                                <a href="petProfile" class="btn btn-outline-secondary">Quay lại</a>
                                 <button type="submit" class="btn btn-primary-blue">Cập nhật Pet</button>
                             </div>
                         </form>
                     </div>
                 </div>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
             </body>
 
             </html>

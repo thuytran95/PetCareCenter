@@ -8,76 +8,86 @@
 <head>
     <meta charset="UTF-8">
     <title>Đăng ký dịch vụ Y tế</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <jsp:include page="linkgroup.jsp"/>
+    <link rel="stylesheet" href="css/service.css"/>
 </head>
-<body class="bg-light">
+<body class="service-page">
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10">
-            <div class="card shadow-sm">
-                <div class="card-header bg-danger text-white text-center">
-                    <h4 class="mb-0">🩺 Đăng ký dịch vụ Y tế cho thú cưng</h4>
+<div class="container py-5" style="min-height:100vh;">
+    <div class="booking-layout">
+    <div class="service-shell theme-medical">
+        <div class="service-card">
+            <div class="service-stripe"></div>
+
+            <div class="service-head">
+                <div class="service-head-icon"><i class="fa-solid fa-briefcase-medical"></i></div>
+                <div>
+                    <h1 class="service-title">Đăng ký dịch vụ Y tế</h1>
+                    <p class="service-subtitle">Khám bệnh, tiêm phòng và chăm sóc sức khỏe cho thú cưng</p>
                 </div>
-                <div class="card-body">
+            </div>
 
-                    <%
-                        Integer medicalId = (Integer) request.getAttribute("medicalId");
-                        List<MedicalServiceItem> allItems = (List<MedicalServiceItem>) request.getAttribute("allItems");
+            <div class="service-body">
+                <%
+                    List<MedicalServiceItem> allItems = (List<MedicalServiceItem>) request.getAttribute("allItems");
+                    LocalDateTime now = LocalDateTime.now();
+                    String admissionDate = now.toString().substring(0,16);
+                    String error = (String) request.getAttribute("error");
+                %>
 
-                        LocalDateTime now = LocalDateTime.now();
-                        String admissionDate = now.toString().substring(0,16);
-
-                        if (allItems == null || allItems.isEmpty()) {
-                            response.sendRedirect("chooseService.jsp");
-                            return;
-                        }
-                    %>
-
-                    <!-- Form đăng ký -->
-                    <form action="MedicalBookingServlet" method="post">
-                        <div class="table-responsive mb-4">
-                            <table class="table table-bordered align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Chọn</th>
-                                        <th>Tên dịch vụ</th>
-                                        <th>Giá (VNĐ)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% for (MedicalServiceItem item : allItems) { %>
-                                    <tr>
-                                        <td class="text-center">
-                                            <input type="checkbox" name="itemIds" value="<%= item.getItemId() %>">
-                                        </td>
-                                        <td><%= item.getItemName() %></td>
-                                        <td class="text-danger fw-bold"><%= item.getItemPrice() %></td>
-                                    </tr>
-                                    <% } %>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Ngày nhập viện -->
-                        <div class="mb-3">
-                            <label for="admissionDate" class="form-label fw-bold">📅 Ngày nhập viện:</label>
-                            <input type="datetime-local" id="admissionDate" name="admissionDate"
-                                   class="form-control" value="<%= admissionDate %>" required>
-                        </div>
-
-                        <!-- Nút hành động -->
-                        <div class="d-flex justify-content-between">
-                            <a href="chooseService.jsp" class="btn btn-secondary">⬅ Quay lại</a>
-                            <button type="submit" class="btn btn-danger">Đăng ký</button>
-                        </div>
-                    </form>
-
+                <% if (error != null) { %>
+                <div class="service-alert">
+                    <i class="fa-solid fa-circle-exclamation"></i> <%= error %>
                 </div>
+                <% } %>
+
+                <form action="MedicalBookingServlet" method="post" data-summary-form>
+
+                    <div class="service-section-label">Danh sách dịch vụ</div>
+
+                    <div class="item-list">
+                        <% if (allItems != null && !allItems.isEmpty()) {
+                               for (MedicalServiceItem item : allItems) { %>
+                        <label class="item-option">
+                            <input type="checkbox" name="itemIds" value="<%= item.getItemId() %>"
+                                   data-price="<%= item.getItemPrice() %>"
+                                   data-label="<%= item.getItemName() %>">
+                            <span class="item-name"><%= item.getItemName() %></span>
+                            <span class="item-price"><%= String.format("%,.0f", item.getItemPrice()) %> đ</span>
+                        </label>
+                        <%     }
+                           } else { %>
+                        <div class="item-empty">
+                            <i class="fa-solid fa-briefcase-medical fa-lg mb-2 d-block"></i>
+                            Hiện chưa có dịch vụ y tế nào.
+                        </div>
+                        <% } %>
+                    </div>
+
+                    <div class="service-section-label">Ngày &amp; giờ nhập viện</div>
+                    <input type="datetime-local" id="admissionDate" name="admissionDate" class="form-control"
+                           value="<%= admissionDate %>" min="<%= admissionDate %>" required>
+
+                    <div class="service-actions">
+                        <a href="<%=request.getContextPath()%>/chooseService" class="btn-back">
+                            <i class="fa-solid fa-arrow-left"></i> Quay lại
+                        </a>
+                        <button type="submit" class="btn btn-service"
+                                <%= (allItems == null || allItems.isEmpty()) ? "disabled" : "" %>>
+                            Đăng ký dịch vụ
+                        </button>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
+
+        <jsp:include page="bookingSummary.jsp"/>
+    </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/booking-summary.js"></script>
 </body>
 </html>

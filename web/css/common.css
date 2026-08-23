@@ -1,22 +1,47 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
+
 :root {
-  --primary-blue: #379ae6;
-  --primary-blue-hover: #166db0;
-  --light-blue: #ecf6ff;
-  --text-body: #565d6d;
-  --border-input: #1e2128;
-  --text-input: #bdc1ca;
+  /* Giữ nguyên tên biến cũ (--primary-blue...) để không phải sửa lại toàn bộ JSP/CSS đang tham chiếu,
+     chỉ đổi giá trị màu sang bảng màu mới (cam san hô) */
+  --primary-blue: #ff6b4a;
+  --primary-blue-hover: #e8552f;
+  --light-blue: #ffe3d6;
+  --text-body: #57524c;
+  --border-input: #f0e6da;
+  --text-input: #b8ada0;
+
+  /* Bảng màu nhiều sắc mới */
+  --pink: #f0508c;
+  --pink-tint: #fde1ec;
+  --blue: #3e8ef7;
+  --blue-tint: #dcebff;
+  --amber: #ffab2e;
+  --amber-tint: #ffedd1;
+  --teal: #12b5a6;
+  --teal-tint: #d2f4ef;
+  --purple: #8b5cf6;
+  --purple-tint: #ede4fe;
+
+  --bg-warm: #fff8f0;
+  --border-warm: #f0e6da;
 }
 
 body {
   color: var(--text-body);
   font-size: 14px;
   line-height: 1.4;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
 }
 
 .heading {
   font-size: 52px;
   font-weight: 700;
   color: #323743;
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
 }
 
 .bg-primary-blue {
@@ -24,7 +49,7 @@ body {
 }
 
 .btn {
-  border-radius: 20px;
+  border-radius: 999px;
 }
 
 .btn-primary-blue {
@@ -69,9 +94,22 @@ body {
   font-size: 24px;
   color: var(--primary-blue);
   font-weight: 700;
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
 }
 
 .form-control:focus {
   outline: none;
   box-shadow: none;
 }
+
+/* Tiện ích màu sắc đa dạng — dùng cho card/nhãn theo từng loại dịch vụ */
+.text-pink { color: var(--pink); }
+.bg-pink-tint { background-color: var(--pink-tint); }
+.text-blue { color: var(--blue); }
+.bg-blue-tint { background-color: var(--blue-tint); }
+.text-amber { color: var(--amber); }
+.bg-amber-tint { background-color: var(--amber-tint); }
+.text-teal { color: var(--teal); }
+.bg-teal-tint { background-color: var(--teal-tint); }
+.text-purple { color: var(--purple); }
+.bg-purple-tint { background-color: var(--purple-tint); }

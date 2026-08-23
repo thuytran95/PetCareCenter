@@ -100,7 +100,7 @@
 }
 
 .header-account {
-  border: 1px solid #9095a1;
+  border: 1px solid var(--border-warm);
   border-radius: 18px 0px 0px 18px;
   padding: 8px;
   height: 40px;
@@ -113,7 +113,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 1px solid #9095a1;
+  border: 1px solid var(--border-warm);
   border-left: none;
   font-size: 12px;
 }

@@ -12,10 +12,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(urlPatterns = {"/register"})
 @MultipartConfig(maxFileSize = 16177215)
 public class RegisterServlet extends HttpServlet {
+
+    private static final Logger LOGGER = Logger.getLogger(RegisterServlet.class.getName());
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -28,8 +32,6 @@ public class RegisterServlet extends HttpServlet {
     @Override  protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Connection conn = MyUtils.getStoredConnection(request);
-
         String userName = request.getParameter("userName");
         String password = request.getParameter("password");
         String gender = request.getParameter("gender");
@@ -37,14 +39,6 @@ public class RegisterServlet extends HttpServlet {
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
         String fullName = request.getParameter("fullName");
-
-        Part filePart = request.getPart("avatar");
-        byte[] avatar = null;
-        if (filePart != null && filePart.getSize() > 0) {
-            try (InputStream is = filePart.getInputStream()) {
-                avatar = is.readAllBytes();
-            }
-        }
 
         UserAccount newUser = new UserAccount();
         newUser.setUserName(userName);
@@ -54,17 +48,36 @@ public class RegisterServlet extends HttpServlet {
         newUser.setPhone(phone);
         newUser.setAddress(address);
         newUser.setFullName(fullName);
-        newUser.setAvatar(avatar);
+
+        if (userName == null || password == null || userName.isBlank() || password.isBlank()) {
+            request.setAttribute("error", "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
+            request.setAttribute("user", newUser);
+            request.getRequestDispatcher("/register.jsp").forward(request, response);
+            return;
+        }
+
+        Connection conn = MyUtils.getStoredConnection(request);
+        if (conn == null) {
+            throw new ServletException("Không có kết nối CSDL cho request này");
+        }
 
         try {
+            Part filePart = request.getPart("avatar");
+            byte[] avatar = null;
+            if (filePart != null && filePart.getSize() > 0) {
+                try (InputStream is = filePart.getInputStream()) {
+                    avatar = is.readAllBytes();
+                }
+            }
+            newUser.setAvatar(avatar);
+
             DBUtils.register(conn, newUser);
-            request.setAttribute("message", "Đăng ký thành công! Vui lòng đăng nhập.");
-            response.sendRedirect("login.jsp");
+            response.sendRedirect(request.getContextPath() + "/login");
         } catch (SQLException e) {
-            System.out.println("error");
+            LOGGER.log(Level.WARNING, "Đăng ký thất bại cho userName=" + userName, e);
             request.setAttribute("error", e.getMessage());
             request.setAttribute("user", newUser);
-            request.getRequestDispatcher("register.jsp").forward(request, response);
+            request.getRequestDispatcher("/register.jsp").forward(request, response);
         }
     }
 }

@@ -1,7 +1,11 @@
+@import "common.css";
+
 .footer-container {
   background-color: var(--primary-blue);
   color: white;
   padding: 72px 0;
+  border-top: 6px solid transparent;
+  border-image: linear-gradient(90deg, var(--pink), var(--primary-blue), var(--amber), var(--teal), var(--blue)) 1;
 }
 
 footer {

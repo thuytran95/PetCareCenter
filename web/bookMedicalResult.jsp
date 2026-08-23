@@ -1,86 +1,75 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="java.util.List" %>
-<%@ page import="com.petweb.model.MedicalServiceItem" %>
-<%@ page import="java.math.BigDecimal" %>
-<%@ page import="com.petweb.model.MedicalDetail" %>
-
+<%@ page import="com.petweb.model.BookingLine" %>
+<%@ page import="com.petweb.model.BookingLineItem" %>
+<%
+    BookingLine line = (BookingLine) request.getAttribute("line");
+%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Kết quả đặt dịch vụ Y tế</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Đã thêm dịch vụ Y tế</title>
+    <jsp:include page="linkgroup.jsp"/>
+    <link rel="stylesheet" href="css/service.css"/>
 </head>
-<body class="bg-light">
+<body class="service-page">
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white text-center">
-                    <h4 class="mb-0">🏥 Kết quả đặt dịch vụ Y tế</h4>
+<div class="container py-5 d-flex align-items-center justify-content-center" style="min-height:100vh;">
+    <div class="service-shell theme-medical">
+        <div class="service-card">
+            <div class="service-stripe"></div>
+
+            <div class="service-head">
+                <div class="service-head-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <div>
+                    <h1 class="service-title">Đã thêm dịch vụ Y tế</h1>
+                    <p class="service-subtitle">Bạn có thể đặt thêm dịch vụ khác hoặc hoàn tất đơn</p>
                 </div>
-                <div class="card-body">
+            </div>
 
-                    <%
-                        List<MedicalServiceItem> selectedItems = (List<MedicalServiceItem>) request.getAttribute("selectedItems");
-                        BigDecimal totalPrice = (BigDecimal) request.getAttribute("totalPrice");
-                        MedicalDetail medical = (MedicalDetail) request.getAttribute("medical");
-                        if(selectedItems == null || selectedItems.isEmpty()) {
-                    %>
-                        <div class="alert alert-warning text-center">
-                            Bạn chưa chọn dịch vụ nào.
-                        </div>
-                    <%
-                        } else {
-                    %>
+            <div class="service-body">
+                <% if (line == null || line.getItems().isEmpty()) { %>
+                <div class="item-empty">
+                    <i class="fa-solid fa-briefcase-medical fa-lg mb-2 d-block"></i>
+                    Bạn chưa chọn dịch vụ nào.
+                </div>
+                <% } else { %>
 
-                        <!-- Bảng dịch vụ -->
-                        <div class="table-responsive mb-4">
-                            <table class="table table-bordered align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Tên dịch vụ</th>
-                                        <th>Giá (VNĐ)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                <%
-                                    int index = 1;
-                                    for(MedicalServiceItem item : selectedItems) {
-                                %>
-                                    <tr>
-                                        <td><%= index++ %></td>
-                                        <td><%= item.getItemName() %></td>
-                                        <td class="text-danger fw-bold"><%= item.getItemPrice() %></td>
-                                    </tr>
-                                <% } %>
-                                    <tr class="table-primary">
-                                        <td colspan="2" class="fw-bold text-end">Tổng cộng</td>
-                                        <td class="fw-bold text-danger"><%= totalPrice %> VNĐ</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="result-badge mb-3">
+                    <i class="fa-regular fa-calendar"></i> Ngày nhập viện: <%= line.getFormattedStartAt() %>
+                </div>
 
-                        <!-- Ngày nhập viện -->
-                        <p><b>📅 Ngày nhập viện:</b> 
-                           <span class="text-primary"><%= medical.getFormattedAdmissionDate() %></span>
-                        </p>
-
-                    <% } %>
-
-                    <!-- Quay lại -->
-                    <div class="d-flex justify-content-end mt-4">
-                        <a href="chooseService.jsp" class="btn btn-secondary">⬅ Quay lại đặt dịch vụ</a>
+                <div class="service-section-label">Dịch vụ đã chọn</div>
+                <div class="mb-3">
+                    <% for (BookingLineItem item : line.getItems()) { %>
+                    <div class="result-row">
+                        <span><%= item.getItemName() %></span>
+                        <span class="fw-bold"><%= String.format("%,.0f", item.getItemPrice()) %> đ</span>
                     </div>
+                    <% } %>
+                </div>
 
+                <div class="result-total bg-teal-tint">
+                    <span class="result-total-label text-teal">Tạm tính dịch vụ này</span>
+                    <span class="result-total-value text-teal"><%= String.format("%,.0f", line.getLineTotal()) %> đ</span>
+                </div>
+
+                <% } %>
+
+                <div class="service-actions">
+                    <a href="<%=request.getContextPath()%>/chooseService" class="btn-back">
+                        <i class="fa-solid fa-plus"></i> Đặt thêm dịch vụ
+                    </a>
+                    <form action="BookingServlet" method="post" class="d-flex flex-fill">
+                        <input type="hidden" name="action" value="finish">
+                        <button type="submit" class="btn btn-service w-100">Hoàn tất &amp; Xem hóa đơn</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
