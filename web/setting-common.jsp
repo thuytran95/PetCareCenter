@@ -17,12 +17,12 @@
                                     <span>Thông tin của bạn</span>
                                 </a>
                                 <a class="d-flex gap-2 align-items-center justify-content-center link-underline link-underline-opacity-0 text-body"
-                                    href="${pageContext.request.contextPath}/petProfile.jsp">
+                                    href="${pageContext.request.contextPath}/petProfile">
                                     <span class="circle"><i class="fa-solid fa-paw mx-auto"></i></span>
                                     <span>Thông tin của thú cưng</span>
                                 </a>
                                 <a class="d-flex gap-2 align-items-center justify-content-center link-underline link-underline-opacity-0 text-body"
-                                    href="${pageContext.request.contextPath}/notificationSetting.jsp">
+                                    href="${pageContext.request.contextPath}/notifications">
                                     <span class="circle"><i class="fa-solid fa-bell mx-auto"></i></span>
                                     <span>Cài đặt thông báo</span>
                                 </a>

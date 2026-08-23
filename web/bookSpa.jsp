@@ -8,77 +8,86 @@
 <head>
     <meta charset="UTF-8">
     <title>Đặt dịch vụ Spa</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <jsp:include page="linkgroup.jsp"/>
+    <link rel="stylesheet" href="css/service.css"/>
 </head>
-<body class="bg-light">
+<body class="service-page">
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10">
-            <div class="card shadow-sm">
-                <div class="card-header bg-info text-white text-center">
-                    <h4 class="mb-0">🐾 Đặt dịch vụ Spa cho thú cưng</h4>
+<div class="container py-5" style="min-height:100vh;">
+    <div class="booking-layout">
+    <div class="service-shell theme-spa">
+        <div class="service-card">
+            <div class="service-stripe"></div>
+
+            <div class="service-head">
+                <div class="service-head-icon"><i class="fa-solid fa-spa"></i></div>
+                <div>
+                    <h1 class="service-title">Đặt dịch vụ Spa</h1>
+                    <p class="service-subtitle">Chọn các dịch vụ bạn muốn dành cho bé cưng</p>
                 </div>
-                <div class="card-body">
+            </div>
 
-                    <%
-                        List<SpaServiceItem> allItems = (List<SpaServiceItem>) request.getAttribute("allItems");
-                        LocalDateTime now = LocalDateTime.now();
-                        String bookingDate = now.toString().substring(0,16); 
-                    %>
+            <div class="service-body">
+                <%
+                    List<SpaServiceItem> allItems = (List<SpaServiceItem>) request.getAttribute("allItems");
+                    LocalDateTime now = LocalDateTime.now();
+                    String bookingDate = now.toString().substring(0,16);
+                    String error = (String) request.getAttribute("error");
+                %>
 
-                    <!-- Form -->
-                    <form action="SpaBookingServlet" method="post">
-
-                        <!-- Bảng dịch vụ -->
-                        <div class="table-responsive mb-4">
-                            <table class="table table-bordered align-middle text-center">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Chọn</th>
-                                        <th>Tên dịch vụ</th>
-                                        <th>Giá (VNĐ)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                <% if (allItems != null) {
-                                       for(SpaServiceItem item : allItems) { %>
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" class="form-check-input" name="itemIds" value="<%= item.getItemId() %>">
-                                        </td>
-                                        <td><%= item.getItemName() %></td>
-                                        <td class="text-danger fw-bold"><%= item.getItemPrice() %></td>
-                                    </tr>
-                                <%    }
-                                   } else { %>
-                                    <tr>
-                                        <td colspan="3" class="text-muted">Không có dịch vụ nào.</td>
-                                    </tr>
-                                <% } %>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Ngày đặt -->
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Ngày đặt (Booking Date):</label>
-                            <input type="datetime-local" name="bookingDate" class="form-control" value="<%= bookingDate %>" required>
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="d-flex justify-content-between">
-                            <a href="chooseService.jsp" class="btn btn-secondary">⬅ Quay lại</a>
-                            <button type="submit" class="btn btn-success">Đặt Spa ✅</button>
-                        </div>
-
-                    </form>
-
+                <% if (error != null) { %>
+                <div class="service-alert">
+                    <i class="fa-solid fa-circle-exclamation"></i> <%= error %>
                 </div>
+                <% } %>
+
+                <form action="SpaBookingServlet" method="post" data-summary-form>
+
+                    <div class="service-section-label">Danh sách dịch vụ</div>
+
+                    <div class="item-list">
+                        <% if (allItems != null && !allItems.isEmpty()) {
+                               for (SpaServiceItem item : allItems) { %>
+                        <label class="item-option">
+                            <input type="checkbox" name="itemIds" value="<%= item.getItemId() %>"
+                                   data-price="<%= item.getItemPrice() %>"
+                                   data-label="<%= item.getItemName() %>">
+                            <span class="item-name"><%= item.getItemName() %></span>
+                            <span class="item-price"><%= String.format("%,.0f", item.getItemPrice()) %> đ</span>
+                        </label>
+                        <%     }
+                           } else { %>
+                        <div class="item-empty">
+                            <i class="fa-solid fa-spa fa-lg mb-2 d-block"></i>
+                            Hiện chưa có dịch vụ spa nào.
+                        </div>
+                        <% } %>
+                    </div>
+
+                    <div class="service-section-label">Ngày &amp; giờ đặt lịch</div>
+                    <input type="datetime-local" name="bookingDate" class="form-control"
+                           value="<%= bookingDate %>" min="<%= bookingDate %>" required>
+
+                    <div class="service-actions">
+                        <a href="<%=request.getContextPath()%>/chooseService" class="btn-back">
+                            <i class="fa-solid fa-arrow-left"></i> Quay lại
+                        </a>
+                        <button type="submit" class="btn btn-service"
+                                <%= (allItems == null || allItems.isEmpty()) ? "disabled" : "" %>>
+                            Đặt dịch vụ Spa
+                        </button>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
+
+        <jsp:include page="bookingSummary.jsp"/>
+    </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+<script src="js/booking-summary.js"></script>
 </body>
 </html>

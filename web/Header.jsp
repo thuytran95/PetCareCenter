@@ -20,18 +20,21 @@
                                         </div>
                                     </div>
                                     <div class="col-6 d-flex align-items-center">
-                                        <div class="w-100 form-container position-relative" style="width: 80%">
-                                            <input class="form-control search-input"
-                                                placeholder="Nhập thông tin tìm kiếm" />
-                                            <button class="btn btn-search bg-primary-blue position-absolute"><i
+                                        <form class="w-100 form-container position-relative" style="width: 80%"
+                                            action="${pageContext.request.contextPath}/search" method="get" role="search">
+                                            <input class="form-control search-input" name="q"
+                                                value="${param.q}"
+                                                placeholder="Tìm dịch vụ, thú cưng của bạn..." />
+                                            <button class="btn btn-search bg-primary-blue position-absolute"
+                                                type="submit" aria-label="Tìm kiếm"><i
                                                     class="fa fa-search" aria-hidden="true"></i></button>
-                                        </div>
+                                        </form>
                                     </div>
                                     <div class="col-3 d-flex align-items-center justify-content-center gap-0">
                                         <c:set var="user" value="${sessionScope.loginedUser}"></c:set>
                                         <c:if test="${user == null}">
-                                            <a class="btn btn-primary-blue btn-member px-3" href="auth.jsp">Bạn là thành
-                                                viên?</a>
+                                            <a class="btn btn-primary-blue btn-member px-3"
+                                                href="${pageContext.request.contextPath}/auth.jsp">Bạn là thành viên?</a>
                                         </c:if>
                                         <c:if test="${user!= null}">
                                             <div class="d-flex align-items-stretch gap-2 header-account">
@@ -44,6 +47,12 @@
                                                 <a class="link-underline link-underline-opacity-0 text-primary-blue"
                                                     href="editUser.jsp?userName=${user.userName}">
                                                     <i class="fa-solid fa-pen"></i>
+                                                </a>
+                                            </div>
+                                            <div class="header-icon">
+                                                <a class="circle border border-0 text-white p-0 bg-primary-blue d-flex justify-content-center align-items-center text-decoration-none"
+                                                    href="${pageContext.request.contextPath}/notifications" title="Thông báo của tôi">
+                                                    <i class="fa-regular fa-bell"></i>
                                                 </a>
                                             </div>
                                             <div class="header-icon">
@@ -73,14 +82,20 @@
                                     <div class="collapse navbar-collapse" id="navbarNav">
                                         <ul class="navbar-nav w-100 justify-content-center gap-2">
                                             <li class="nav-item">
-                                                <a class="nav-link active" aria-current="page" href="#">Trang
+                                                <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/home">Trang
                                                     chủ</a>
                                             </li>
+                                            <c:if test="${user != null}">
+                                                <li class="nav-item">
+                                                    <a class="nav-link" href="${pageContext.request.contextPath}/petProfile">
+                                                        <i class="fa-solid fa-paw me-1"></i>Thú cưng của tôi</a>
+                                                </li>
+                                            </c:if>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#ve-chung-toi">Spa thú cưng</a>
+                                                <a class="nav-link" href="${pageContext.request.contextPath}/service?type=spa">Spa thú cưng</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#dich-vu">Khách sạn thú cưng</a>
+                                                <a class="nav-link" href="${pageContext.request.contextPath}/service?type=hotel">Khách sạn thú cưng</a>
                                             </li>
                                             <li class="nav-item dropdown">
                                                 <a class="nav-link dropdown-toggle" href="#" role="button"
@@ -88,9 +103,9 @@
                                                     Khám bệnh thú cưng
                                                 </a>
                                                 <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="#">Thông tin khám bệnh</a>
+                                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/service?type=medical">Thông tin khám bệnh</a>
                                                     </li>
-                                                    <li><a class="dropdown-item" href="#">Sổ tiêm chủng thú cưng</a>
+                                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/service?type=vaccine">Tiêm vaccine</a>
                                                     </li>
                                                 </ul>
                                             </li>

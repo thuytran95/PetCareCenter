@@ -1,3 +1,5 @@
+@import "common.css";
+
 .banner {
   padding: 120px 0 100px;
 }
@@ -6,11 +8,12 @@
   font-size: 52px;
   font-weight: 700;
   color: #323743;
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
 }
 
 .banner-content {
   font-size: 18px;
-  color: #171a1f;
+  color: var(--text-body);
   margin-bottom: 64px;
 }
 
@@ -22,35 +25,78 @@
 .banner-image img {
   object-fit: cover;
   height: 400px;
+  border-radius: 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.banner-image-frame {
+  position: relative;
+}
+
+.banner-image-frame::before {
+  content: "";
+  position: absolute;
+  inset: -18px -18px auto auto;
+  width: 70%;
+  height: 70%;
+  border-radius: 40px;
+  background: linear-gradient(135deg, var(--pink-tint), var(--amber-tint));
+  z-index: 0;
+}
+
+.banner-image-frame::after {
+  content: "";
+  position: absolute;
+  inset: auto auto -18px -18px;
+  width: 55%;
+  height: 55%;
+  border-radius: 40px;
+  background: linear-gradient(135deg, var(--teal-tint), var(--blue-tint));
+  z-index: 0;
 }
 
 .banner .btn {
-  width: 260px;
+  min-width: 220px;
+  padding: 14px 28px;
+  font-weight: 600;
 }
 
-/*section service*/
+/* section service */
 .service {
   padding: 115px 0 64px;
 }
 
 .service-item {
-  /*max-width: 270px;*/
-  border: 1px solid var(--primary-blue);
-  border-radius: 6px;
+  border: 1px solid var(--border-warm);
+  border-radius: 20px;
   padding: 24px;
+  background: white;
   box-shadow: 0px 0px 1px #171a1f12, 0px 0px 2px #171a1f1f;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.service-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -12px rgba(43, 36, 32, 0.16);
 }
 
 .service-item-icon {
-  color: var(--primary-blue);
-  font-size: 24px;
-  margin-bottom: 24px;
-  width: 24px;
-  height: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--pink-tint);
+  color: var(--pink);
+  font-size: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .service-item-title {
   font-size: 20px;
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
 }
 
 .service-item p {
@@ -58,11 +104,72 @@
 }
 
 .service-item-link {
-  color: var(--text-body);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 13.5px;
+  text-decoration: none;
+  color: white;
+  background-color: var(--pink);
+  transition: background-color 0.15s, transform 0.15s;
+}
+
+.service-item-link:hover {
+  color: white;
+  transform: translateX(2px);
+  filter: brightness(0.93);
+}
+
+.service-item-link i {
+  font-size: 12px;
 }
 
 .service-list {
   padding-top: 40px;
+}
+
+/* Mỗi dịch vụ một màu riêng, theo đúng thứ tự trong home.jsp:
+   hàng 1: Spa (hồng) / Khách sạn (xanh dương)
+   hàng 2: Tiêm vaccine (cam) / Khám bệnh (xanh ngọc) */
+.service-list .row:nth-of-type(1) > div:nth-of-type(2) .service-item-icon,
+.service-list .row:nth-of-type(1) > div:nth-of-type(2) .text-primary-blue {
+  color: var(--blue);
+}
+.service-list .row:nth-of-type(1) > div:nth-of-type(2) .service-item-icon {
+  background: var(--blue-tint);
+}
+.service-list .row:nth-of-type(1) > div:nth-of-type(2) .service-item-link {
+  background-color: var(--blue);
+}
+
+.service-list .row:nth-of-type(2) > div:nth-of-type(1) .service-item-icon,
+.service-list .row:nth-of-type(2) > div:nth-of-type(1) .text-primary-blue {
+  color: var(--amber);
+}
+.service-list .row:nth-of-type(2) > div:nth-of-type(1) .service-item-icon {
+  background: var(--amber-tint);
+}
+.service-list .row:nth-of-type(2) > div:nth-of-type(1) .service-item-link {
+  background-color: var(--amber);
+}
+
+.service-list .row:nth-of-type(2) > div:nth-of-type(2) .service-item-icon,
+.service-list .row:nth-of-type(2) > div:nth-of-type(2) .text-primary-blue {
+  color: var(--teal);
+}
+.service-list .row:nth-of-type(2) > div:nth-of-type(2) .service-item-icon {
+  background: var(--teal-tint);
+}
+.service-list .row:nth-of-type(2) > div:nth-of-type(2) .service-item-link {
+  background-color: var(--teal);
+}
+
+.service-list .row:nth-of-type(1) > div:nth-of-type(1) .text-primary-blue {
+  color: var(--pink);
 }
 
 .member-card {
@@ -70,15 +177,15 @@
   border: 0;
   border-radius: 1.25rem;
   /* rounded-4 */
-  box-shadow: 0 12px 30px rgba(33, 37, 41, 0.08);
+  box-shadow: 0 12px 30px rgba(43, 36, 32, 0.08);
 }
 
 .avatar {
   width: 84px;
   height: 84px;
   border-radius: 50%;
-  background: #2f3a4a;
-  color: #fff;
+  background: var(--border-warm);
+  color: var(--text-body);
   display: grid;
   place-items: center;
   font-weight: 600;
@@ -93,8 +200,8 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: #e7f1ff;
-  color: #0d6efd;
+  background: var(--teal-tint);
+  color: var(--teal);
   display: grid;
   place-items: center;
   border: 2px solid #fff;
@@ -102,25 +209,119 @@
 }
 
 .muted {
-  color: #98a2b3;
+  color: var(--text-input);
 }
 
 .icon-line i {
   width: 22px;
   font-size: 18px;
+  color: var(--primary-blue);
 }
 
 .member-card .card-body {
   padding: 1.4rem 1.4rem 1.25rem;
 }
 
+/* Mỗi thành viên một màu viền avatar, theo thứ tự trong home.jsp */
+#team .col-6:nth-of-type(1) .avatar { box-shadow: 0 0 0 3px var(--light-blue); }
+#team .col-6:nth-of-type(2) .avatar { box-shadow: 0 0 0 3px var(--blue-tint); }
+#team .col-6:nth-of-type(3) .avatar { box-shadow: 0 0 0 3px var(--pink-tint); }
+#team .col-6:nth-of-type(4) .avatar { box-shadow: 0 0 0 3px var(--purple-tint); }
+
 #team {
   padding: 40px 0;
   background: radial-gradient(
     1200px 600px at 10% 0%,
-    #e9f1ff 0%,
-    #eaf2ff 35%,
-    #f4f8ff 60%,
+    var(--pink-tint) 0%,
+    var(--amber-tint) 35%,
+    var(--bg-warm) 60%,
     #ffffff 100%
   );
+}
+
+/* ===== Tra cứu hóa đơn cho khách chưa đăng nhập ===== */
+.guest-lookup {
+  padding: 56px 0;
+  background: linear-gradient(135deg, var(--blue-tint) 0%, #ffffff 55%, var(--pink-tint) 100%);
+}
+
+.gl-card {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 32px;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid var(--border-warm, #f0e6da);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 14px 38px rgba(23, 43, 77, .09);
+}
+
+.gl-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 14px;
+  background: var(--amber-tint);
+  color: var(--amber);
+}
+
+.gl-info p {
+  color: var(--text-body);
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+
+.gl-note {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  color: var(--text-body);
+  background: var(--blue-tint);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.gl-note i { color: var(--primary-blue); margin-top: 2px; }
+.gl-note a { color: var(--primary-blue); font-weight: 600; }
+
+.gl-form {
+  background: var(--bg-warm, #fbfaf7);
+  border: 1px solid var(--border-warm, #f0e6da);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.gl-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--text-body);
+  margin-bottom: 6px;
+}
+
+.gl-code {
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  font-weight: 600;
+}
+
+.gl-link {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text-body);
+  text-decoration: underline;
+}
+
+@media (max-width: 991px) {
+  .gl-card { grid-template-columns: 1fr; padding: 24px; }
 }

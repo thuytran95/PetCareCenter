@@ -82,7 +82,7 @@
                     </form>
                 </div>
                 <div class="card-footer text-center">
-                    <a href="<%=request.getContextPath()%>/petProfile.jsp" class="link-underline link-underline-opacity-0 text-primary-blue">Quay lại danh sách</a>
+                    <a href="<%=request.getContextPath()%>/petProfile" class="link-underline link-underline-opacity-0 text-primary-blue">Quay lại danh sách</a>
                 </div>
             </div>
         </div>

@@ -1,99 +1,84 @@
 package com.petweb.controller;
 
-import com.petweb.model.MedicalDetail;
-import com.petweb.model.MedicalServiceItem;
-import com.petweb.utils.DBUtils;
+import com.petweb.dao.ServiceCatalogDAO;
+import com.petweb.model.BookingLine;
+import com.petweb.service.BookingException;
+import com.petweb.service.BookingService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
+ * Đăng ký dịch vụ Y tế. Dùng chung cho khách đã đăng nhập và khách vãng lai.
  *
- * @author Duyet
+ * Bản Guest cũ (MedicalBookingServletGuest + bookMedicalGuest.jsp) từng bị lỗi
+ * copy nhầm khiến khách vãng lai không đặt được dịch vụ y tế; gộp một bản
+ * loại bỏ hẳn nguy cơ đó.
  */
 @WebServlet("/MedicalBookingServlet")
 public class MedicalBookingServlet extends HttpServlet {
 
+    private static final Logger LOGGER = Logger.getLogger(MedicalBookingServlet.class.getName());
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        try {
-            // Lấy tất cả dịch vụ y tế để hiển thị cho user chọn
-            List<MedicalServiceItem> allItems = DBUtils.getAllMedicalItems();
-            request.setAttribute("allItems", allItems);
-            request.setAttribute("medicalId", 1);
+            throws ServletException, IOException {
 
-            // Forward sang JSP form booking
-            request.getRequestDispatcher("bookMedical.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.getWriter().println("<h3>Lỗi: " + e.getMessage() + "</h3>");
+        Connection conn = BookingServlet.requireConnection(request);
+        try {
+            request.setAttribute("allItems", ServiceCatalogDAO.findAllMedicalItems(conn));
+            BookingServlet.exposeDraft(request, conn);
+            request.getRequestDispatcher("/bookMedical.jsp").forward(request, response);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi tải danh sách dịch vụ y tế", e);
+            throw new ServletException(e);
         }
     }
 
     @Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws IOException, ServletException {
-    try {
-        // Lấy ngày nhập viện
-        String admissionDateStr = request.getParameter("admissionDate");
-        Timestamp admissionDate = null;
-        if (admissionDateStr != null && !admissionDateStr.isEmpty()) {
-            admissionDate = Timestamp.valueOf(admissionDateStr.replace("T", " ") + ":00");
-        } else {
-            response.getWriter().println("<h3>Lỗi: admissionDate không hợp lệ!</h3>");
-            return;
-        }
-        Integer serviceId = (Integer) request.getSession().getAttribute("serviceId");
-            if (serviceId == null) {
-                response.getWriter().println("<h3>Lỗi: Chưa có serviceId trong session!</h3>");
-                return;
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+        HttpSession session = request.getSession();
+        Connection conn = BookingServlet.requireConnection(request);
+
+        try {
+            int bookingId = BookingServlet.requireDraftId(session);
+
+            List<Integer> itemIds = ServletParams.parseIds(request.getParameterValues("itemIds"));
+            Timestamp admissionDate = HotelServlet.parseDateTime(
+                    request.getParameter("admissionDate"), "Ngày nhập viện không hợp lệ.");
+
+            BookingLine line = BookingService.addMedicalLine(conn, bookingId, itemIds, admissionDate);
+
+            request.setAttribute("line", line);
+            request.getRequestDispatcher("/bookMedicalResult.jsp").forward(request, response);
+
+        } catch (BookingException e) {
+            request.setAttribute("error", e.getMessage());
+            try {
+                request.setAttribute("allItems", ServiceCatalogDAO.findAllMedicalItems(conn));
+            } catch (SQLException ignored) {
+                // danh sách rỗng thì JSP đã có nhánh hiển thị riêng
             }
-            request.setAttribute("serviceId", serviceId);
-        // Lấy danh sách item user chọn
-        String[] itemIds = request.getParameterValues("itemIds");
-        if (itemIds == null || itemIds.length == 0) {
-            response.getWriter().println("<h3>Lỗi: Chưa chọn dịch vụ nào!</h3>");
-            return;
+            BookingServlet.exposeDraft(request, conn);
+            request.getRequestDispatcher("/bookMedical.jsp").forward(request, response);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi đăng ký dịch vụ y tế", e);
+            throw new ServletException(e);
         }
-        
-        // Gọi hàm DBUtils để insert xuống DB
-        int medicalId = 0; // hoặc lấy từ request nếu update
-        BigDecimal totalPrice = DBUtils.addMedicalItemsAndCalculatePrice(medicalId,serviceId, itemIds, admissionDate);
-
-        // Lấy lại MedicalDetail để hiển thị
-        MedicalDetail medical = new MedicalDetail();
-        medical.setAdmissionDate(admissionDate);
-        medical.setMedicalPrice(totalPrice);
-
-        // Lấy lại danh sách item đã chọn
-        List<MedicalServiceItem> selectedItems = new ArrayList<>();
-        for (String idStr : itemIds) {
-            int id = Integer.parseInt(idStr);
-            MedicalServiceItem item = DBUtils.getMedicalItemById(id);
-            if (item != null) {
-                selectedItems.add(item);
-            }
-        }
-
-        request.setAttribute("medical", medical);
-        request.setAttribute("selectedItems", selectedItems);
-        request.setAttribute("totalPrice", totalPrice);
-
-        request.getRequestDispatcher("bookMedicalResult.jsp").forward(request, response);
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        response.getWriter().println("<h3>Lỗi: " + e.getMessage() + "</h3>");
-    }
     }
 }

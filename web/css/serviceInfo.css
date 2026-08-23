@@ -1,0 +1,328 @@
+@import "common.css";
+
+/* ===================================================================
+   Trang giới thiệu dịch vụ (/service?type=...)
+   Bốn dịch vụ dùng chung khuôn này, chỉ khác biến màu theo lớp
+   svc-hero--<màu> và các lớp tiện ích bg-*-tint / text-* trong common.css
+   =================================================================== */
+
+/* ----- Mở đầu ----- */
+.svc-hero {
+  padding: 56px 0 64px;
+  background: var(--bg-warm);
+  border-bottom: 1px solid var(--border-warm);
+}
+
+.svc-hero-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+
+.svc-hero-title {
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1.15;
+  color: #292524;
+  margin: 0;
+}
+
+.svc-hero-tagline {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-body);
+  margin: 10px 0 0;
+}
+
+.svc-hero-intro {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-body);
+  margin: 16px 0 0;
+  max-width: 620px;
+}
+
+.svc-hero-art {
+  border-radius: 28px;
+  aspect-ratio: 1 / 1;
+  max-width: 300px;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 110px;
+  opacity: 0.85;
+}
+
+/* ----- Nút ----- */
+.btn-svc {
+  border-radius: 999px;
+  padding: 13px 28px;
+  font-weight: 600;
+  font-size: 15px;
+  color: white;
+  border: none;
+}
+
+.btn-svc:hover {
+  color: white;
+  filter: brightness(0.93);
+}
+
+.btn-svc--pink { background: var(--pink); }
+.btn-svc--blue { background: var(--blue); }
+.btn-svc--amber { background: var(--amber); }
+.btn-svc--teal { background: var(--teal); }
+
+.btn-svc-outline {
+  border-radius: 999px;
+  padding: 13px 28px;
+  font-weight: 600;
+  font-size: 15px;
+  border: 1.5px solid var(--border-warm);
+  background: white;
+  color: var(--text-body);
+}
+
+.btn-svc-outline:hover {
+  background: var(--bg-warm);
+  color: var(--text-body);
+}
+
+/* ----- Khối nội dung ----- */
+.svc-section {
+  padding: 56px 0;
+}
+
+.svc-section--alt {
+  background: var(--bg-warm);
+}
+
+.svc-section-title {
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  color: #292524;
+  margin-bottom: 24px;
+}
+
+/* ----- Điểm nổi bật ----- */
+.svc-highlight {
+  background: white;
+  border: 1px solid var(--border-warm);
+  border-radius: 20px;
+  padding: 22px;
+  height: 100%;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.svc-highlight:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px -16px rgba(43, 36, 32, 0.18);
+}
+
+.svc-highlight-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+
+.svc-highlight p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-body);
+}
+
+/* ----- Quy trình ----- */
+.svc-steps {
+  list-style: none;
+  counter-reset: step;
+  padding: 0;
+  margin: 0;
+  max-width: 720px;
+}
+
+.svc-steps li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: white;
+  border: 1px solid var(--border-warm);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+  font-size: 14.5px;
+  color: #292524;
+}
+
+.svc-step-no {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+}
+
+/* ----- Bảng giá ----- */
+.svc-price-note {
+  font-size: 13.5px;
+  color: var(--text-body);
+  margin-bottom: 18px;
+}
+
+.svc-price-card {
+  background: white;
+  border: 1px solid var(--border-warm);
+  border-radius: 22px;
+  overflow: hidden;
+  max-width: 760px;
+}
+
+.svc-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border-warm);
+  font-size: 14.5px;
+}
+
+.svc-price-row:last-child {
+  border-bottom: none;
+}
+
+.svc-price-desc {
+  font-size: 12.5px;
+  color: var(--text-body);
+  margin-top: 2px;
+}
+
+.svc-price-value {
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  white-space: nowrap;
+}
+
+.svc-price-value span {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-body);
+}
+
+.svc-price-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-input);
+  font-size: 13.5px;
+}
+
+/* ----- Câu hỏi thường gặp ----- */
+.svc-faq {
+  max-width: 760px;
+}
+
+.svc-faq .accordion-item {
+  border: 1px solid var(--border-warm);
+  border-radius: 16px !important;
+  margin-bottom: 10px;
+  overflow: hidden;
+  background: white;
+}
+
+.svc-faq .accordion-button {
+  font-weight: 600;
+  font-size: 14.5px;
+  color: #292524;
+  background: white;
+  box-shadow: none;
+  padding: 16px 20px;
+}
+
+.svc-faq .accordion-button:not(.collapsed) {
+  background: var(--bg-warm);
+  color: #292524;
+}
+
+.svc-faq .accordion-button:focus {
+  box-shadow: none;
+  border-color: var(--border-warm);
+}
+
+.svc-faq .accordion-body {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-body);
+  padding: 4px 20px 18px;
+}
+
+/* ----- Kêu gọi đặt lịch ----- */
+.svc-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  border-radius: 24px;
+  padding: 32px 36px;
+}
+
+/* ----- Dịch vụ khác ----- */
+.svc-other {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: white;
+  border: 1px solid var(--border-warm);
+  border-radius: 18px;
+  padding: 16px 18px;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.svc-other:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px -16px rgba(43, 36, 32, 0.18);
+  color: inherit;
+}
+
+.svc-other-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+.svc-other-tagline {
+  font-size: 12px;
+  color: var(--text-body);
+  margin-top: 2px;
+}
+
+@media (max-width: 767px) {
+  .svc-hero-title { font-size: 30px; }
+  .svc-section { padding: 40px 0; }
+}

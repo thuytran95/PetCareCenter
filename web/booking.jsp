@@ -1,108 +1,101 @@
-<%-- Document : booking Created on : Sep 22, 2025, 11:47:47 PM Author : Admin --%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%
+    // Điểm vào của khách vãng lai: nhập thông tin liên hệ + thú cưng rồi mở đơn nháp.
+    // Không tạo tài khoản trong user_account như luồng cũ.
+    String error = (String) request.getAttribute("error");
+    String serviceType = request.getParameter("serviceType");
+%>
 <!DOCTYPE html>
-<html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đặt lịch không cần đăng nhập</title>
+    <jsp:include page="linkgroup.jsp"/>
+    <link rel="stylesheet" href="css/service.css"/>
+</head>
+<body class="service-page">
 
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Đặt lịch hẹn</title>
-        <jsp:include page="linkgroup.jsp"></jsp:include>
-            <link rel="stylesheet" href="css/common.css" />
-            <link rel="stylesheet" href="css/header.css">
-            <link rel="stylesheet" href="css/booking.css" />
-        </head>
-        <body>
-        <jsp:include page="Header.jsp"></jsp:include>
-        <div style="margin-bottom: 80px;">
-            <div class="container">
-                <div class="d-flex flex-column justify-content-center align-items-center text-center"
-                     style="gap: 36px">
-                    <div class="text-primary-blue fw-bold" style="font-size: 40px">Đặt lịch hẹn</div>
-                    <p class="mb-5">Đặt lịch hẹn dễ dàng và nhanh chóng với đội ngũ thú y tận tâm, hoạt động 24/7 –
-                        chăm sóc sức khỏe toàn diện cho thú cưng của bạn mọi lúc, mọi nơi!</p>
+<div class="container py-5 d-flex align-items-center justify-content-center" style="min-height:100vh;">
+    <div class="service-shell" style="max-width:600px;">
+        <div class="service-card">
+            <div class="service-stripe"></div>
+
+            <div class="service-head">
+                <div class="service-head-icon" style="background:var(--light-blue);color:var(--primary-blue);">
+                    <i class="fa-solid fa-paw"></i>
                 </div>
-                <div class="booking-card">
-                    <form action="" class="d-flex flex-column align-items-center gap-4">
-                        <div class="row gy-4 mb-4">
-                            <div class="col-12 col-md-6">
-                                <div class="d-flex gap-2 justify-content-start align-items-center mb-1">
-                                    <span class="fw-bold">Thông tin thú cưng</span>
-                                    <i class="fa-solid fa-chevron-down"></i>
-                                </div>
-                                <div class="form-container">
-                                    <label class="fw-bold mb-1">Chọn loại thú cưng*</label>
-                                    <select class="form-select" name="gender">
-                                        <option value="">Chọn loại thú cưng</option>
-                                        <option value="F">Chó</option>
-                                        <option value="M">Mèo</option>
-                                        <option value="M">Khác</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <div class="d-flex gap-2 justify-content-start align-items-center mb-1">
-                                    <span class="fw-bold">Thông tin dịch vụ</span>
-                                    <i class="fa-solid fa-chevron-down"></i>
-                                </div>
-                                <div class="form-container">
-                                    <label class="fw-bold mb-1">Chọn loại dịch vụ*</label>
-                                    <select class="form-select" name="gender">
-                                        <option value="">Chọn loại dịch vụ</option>
-                                        <option value="F">Spa</option>
-                                        <option value="M">Khách sạn</option>
-                                        <option value="M">Khám bệnh</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <div class="d-flex gap-2 justify-content-start align-items-center mb-1">
-                                    <span class="fw-bold">Thời gian hẹn</span>
-                                    <i class="fa-solid fa-chevron-down"></i>
-                                </div>
-                                <div class="form-container">
-                                    <label class="fw-bold mb-1">Chọn thời gian hẹn*</label>
-                                    <input type="date" class="form-control" />
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <div class="d-flex align-items-end justify-content-center h-100">
-                                    <div class="form-container w-100 mt-auto">
-                                        <label class="fw-bold mb-1">Chọn giờ hẹn*</label>
-                                        <input type="time" class="form-control" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <div class="d-flex gap-2 justify-content-start align-items-center mb-1">
-                                    <span class="fw-bold">Thông tin khách hàng</span>
-                                    <i class="fa-solid fa-chevron-down"></i>
-                                </div>
-                                <div class="form-container">
-                                    <label class="fw-bold mb-1">Họ và tên*</label>
-                                    <input type="text" class="form-control" placeholder="Nhập họ tên" />
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <div class="d-flex align-items-end justify-content-center h-100">
-                                    <div class="form-container w-100 mt-auto">
-                                        <label class="fw-bold mb-1">Số điện thoại*</label>
-                                        <input type="text" class="form-control" placeholder="Nhập số điện thoại" />
-                                    </div>
-                                </div>
-                            </div>
+                <div>
+                    <h1 class="service-title">Đặt lịch nhanh</h1>
+                    <p class="service-subtitle">Không cần tạo tài khoản — chỉ cần thông tin liên hệ</p>
+                </div>
+            </div>
+
+            <div class="service-body">
+
+                <% if (error != null) { %>
+                <div class="service-alert">
+                    <i class="fa-solid fa-circle-exclamation"></i> <%= error %>
+                </div>
+                <% } %>
+
+                <form action="<%=request.getContextPath()%>/BookingServlet" method="post">
+                    <input type="hidden" name="action" value="startGuest">
+                    <% if (serviceType != null && !serviceType.isBlank()) { %>
+                    <input type="hidden" name="serviceType" value="<%= serviceType %>">
+                    <% } %>
+
+                    <div class="service-section-label">Thông tin liên hệ</div>
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">
+                            <input class="form-control" type="text" name="guestName"
+                                   placeholder="Họ và tên người đặt" required>
                         </div>
-                        <button class="btn btn-primary-blue w-50 mx-auto">Xác nhận đặt lịch</button>
-                    </form>
+                        <div class="col-12 col-sm-6">
+                            <input class="form-control" type="tel" name="guestPhone"
+                                   placeholder="Số điện thoại" required>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <input class="form-control" type="email" name="guestEmail"
+                                   placeholder="Email (không bắt buộc)">
+                        </div>
+                    </div>
+
+                    <div class="service-section-label">Thông tin thú cưng</div>
+                    <div class="row g-3">
+                        <div class="col-12 col-sm-6">
+                            <input class="form-control" type="text" name="petName"
+                                   placeholder="Tên thú cưng" required>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <select class="form-select" name="petSpecies">
+                                <option value="">-- Loài --</option>
+                                <option value="Chó">Chó</option>
+                                <option value="Mèo">Mèo</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="service-actions">
+                        <a href="<%=request.getContextPath()%>/home" class="btn-back">
+                            <i class="fa-solid fa-arrow-left"></i> Trang chủ
+                        </a>
+                        <button type="submit" class="btn btn-service">Tiếp tục chọn dịch vụ</button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4" style="font-size:13.5px;color:var(--text-body);">
+                    Đã đặt lịch trước đó?
+                    <a href="<%=request.getContextPath()%>/lookup" class="fw-semibold text-primary-blue">Tra cứu đơn</a>
+                    <br/>
+                    Đã có tài khoản?
+                    <a href="<%=request.getContextPath()%>/login" class="fw-semibold text-primary-blue">Đăng nhập</a>
                 </div>
-
-                                    <div class="text-center mt-4">
-                         <button type="submit" class="btn btn-primary px-4">
-                             Xác nhận & chọn dịch vụ
-                         </button>
-                     </div>
-            </form>
+            </div>
         </div>
-    </body>
+    </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+</body>
 </html>
