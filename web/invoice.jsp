@@ -159,8 +159,9 @@
                     </span>
                 </div>
 
-                <%-- Thanh toán / hủy đơn --%>
-                <% if (booking.isAwaitingPayment() || booking.isCancellable()) { %>
+                <%-- Thanh toán / trả phòng / hủy đơn --%>
+                <% if (booking.isAwaitingPayment() || booking.isCancellable()
+                       || booking.isCheckOutable()) { %>
                 <div class="service-actions">
                     <% if (booking.isAwaitingPayment()) { %>
                     <form action="<%=request.getContextPath()%>/bookingAction" method="post" class="d-flex flex-fill">
@@ -169,6 +170,15 @@
                         <button type="submit" class="btn btn-service w-100"
                                 style="background:var(--teal);">
                             <i class="fa-solid fa-credit-card me-1"></i> Thanh toán
+                        </button>
+                    </form>
+                    <% } %>
+                    <% if (booking.isCheckOutable()) { %>
+                    <form action="<%=request.getContextPath()%>/bookingAction" method="post" class="d-flex flex-fill">
+                        <input type="hidden" name="action" value="checkout">
+                        <input type="hidden" name="bookingId" value="<%= booking.getBookingId() %>">
+                        <button type="submit" class="btn btn-service w-100" style="background:var(--blue);">
+                            <i class="fa-solid fa-door-open me-1"></i> Trả phòng
                         </button>
                     </form>
                     <% } %>

@@ -1,10 +1,10 @@
 package com.petweb.utils;
 
 import com.petweb.dao.BookingDAO;
-import com.petweb.model.Appointment;
 import com.petweb.model.Booking;
 import com.petweb.model.BookingLine;
 import com.petweb.service.BookingService;
+import com.petweb.service.MaintenanceService;
 import com.petweb.service.NotificationService;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -19,18 +19,29 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Tác vụ nền chạy định kỳ khi server hoạt động.
+ * Hẹn giờ chạy các tác vụ nền khi server hoạt động.
  *
- * Trước đây listener này reset cột status của hotel_detail/spa_detail/medical_detail —
- * các bảng đó đã được thay bằng booking/booking_line nên nhiệm vụ giờ là:
+ * Cứ 15 phút một lượt, hệ thống tự giữ cho dữ liệu đúng và không phình ra:
  *
- *  1. Đánh dấu COMPLETED cho những đơn đã xác nhận mà toàn bộ dịch vụ đã qua thời gian.
- *  2. Dọn các đơn nháp (DRAFT) khách bỏ dở quá lâu — trước đây những dòng PENDING
- *     kiểu này nằm lại trong DB vĩnh viễn.
+ *  1. Hủy đơn khách không đến — đã xác nhận nhưng quá giờ nhận phòng vẫn chưa
+ *     thanh toán, để nhả phòng cho người khác.
+ *  2. Đóng đơn đã phục vụ xong thành COMPLETED.
+ *  3. Dọn đơn nháp bỏ dở: đơn rỗng sau 3 giờ, đơn đã chọn dịch vụ sau 24 giờ.
+ *  4. Xóa nhật ký thông báo cũ hơn 90 ngày.
+ *  5. Gửi tin nhắc hẹn (mô phỏng) cho các lịch trong 24 giờ tới.
+ *
+ * Quy tắc của bốn việc đầu nằm ở {@link MaintenanceService}; lớp này chỉ lo
+ * việc hẹn giờ và ghi log, nhờ vậy các quy tắc đó kiểm thử được độc lập.
+ *
+ * Ranh giới quan trọng: chỉ dọn thứ KHÔNG phải chứng từ. Hóa đơn — kể cả đơn đã
+ * hủy hay đã hoàn tất — không bao giờ bị xóa.
  */
 public class AutoStatusListener implements ServletContextListener {
 
     private static final Logger LOGGER = Logger.getLogger(AutoStatusListener.class.getName());
+
+    /** Khoảng cách giữa hai lần dọn, tính bằng phút. */
+    private static final int SWEEP_MINUTES = 15;
 
     private ScheduledExecutorService scheduler;
 
@@ -41,21 +52,28 @@ public class AutoStatusListener implements ServletContextListener {
             t.setDaemon(true); // không giữ JVM sống khi Tomcat dừng
             return t;
         });
-        scheduler.scheduleAtFixedRate(this::sweep, 1, 60, TimeUnit.MINUTES);
+        // Chạy một lượt ngay sau khi khởi động để dọn những gì đọng lại từ lần trước
+        scheduler.scheduleAtFixedRate(this::sweep, 1, SWEEP_MINUTES, TimeUnit.MINUTES);
     }
 
     private void sweep() {
         try (Connection conn = ConnectionUtils.getConnection()) {
             conn.setAutoCommit(false);
             try {
-                int completed = markCompleted(conn);
-                int cleaned = cleanExpiredDrafts(conn);
+                // Hủy khách không đến TRƯỚC khi đóng đơn hoàn tất, để một đơn quá
+                // hạn chưa trả tiền không bị ghi nhầm thành đã phục vụ xong.
+                int noShow = MaintenanceService.cancelNoShows(conn);
+                int completed = MaintenanceService.markCompleted(conn);
+                int cleaned = MaintenanceService.cleanExpiredDrafts(conn);
+                int purged = MaintenanceService.cleanOldNotifications(conn);
                 int reminded = sendUpcomingReminders(conn);
                 conn.commit();
-                if (completed > 0 || cleaned > 0 || reminded > 0) {
+                if (noShow > 0 || completed > 0 || cleaned > 0 || purged > 0 || reminded > 0) {
                     LOGGER.log(Level.INFO,
-                            "Tác vụ nền: {0} đơn hoàn tất, {1} đơn nháp quá hạn được dọn, {2} tin nhắc hẹn.",
-                            new Object[]{completed, cleaned, reminded});
+                            "Tác vụ nền: {0} đơn khách không đến, {1} đơn hoàn tất, "
+                            + "{2} đơn nháp quá hạn được dọn, {3} thông báo cũ được xóa, "
+                            + "{4} tin nhắc hẹn.",
+                            new Object[]{noShow, completed, cleaned, purged, reminded});
                 }
             } catch (Exception ex) {
                 ConnectionUtils.rollbackQuietly(conn);
@@ -63,23 +81,6 @@ public class AutoStatusListener implements ServletContextListener {
             }
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Tác vụ nền cập nhật trạng thái đơn thất bại", e);
-        }
-    }
-
-    /** Đơn CONFIRMED mà mọi dòng dịch vụ đều đã kết thúc thì chuyển sang COMPLETED. */
-    private int markCompleted(Connection conn) throws Exception {
-        String sql = """
-            UPDATE booking b
-            SET status = 'COMPLETED'
-            WHERE b.status = 'PAID'
-              AND NOT EXISTS (
-                    SELECT 1 FROM booking_line l
-                    WHERE l.booking_id = b.booking_id
-                      AND COALESCE(l.end_at, l.start_at) > now()
-              )
-        """;
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            return ps.executeUpdate();
         }
     }
 
@@ -111,15 +112,6 @@ public class AutoStatusListener implements ServletContextListener {
             sent++;
         }
         return sent;
-    }
-
-    /** Xóa đơn nháp bỏ dở quá hạn; các dòng con tự xóa theo nhờ ON DELETE CASCADE. */
-    private int cleanExpiredDrafts(Connection conn) throws Exception {
-        String sql = "DELETE FROM booking WHERE status = 'DRAFT' AND created_at < now() - (? || ' hours')::interval";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, String.valueOf(BookingService.DRAFT_EXPIRE_HOURS));
-            return ps.executeUpdate();
-        }
     }
 
     @Override

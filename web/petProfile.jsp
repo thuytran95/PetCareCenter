@@ -2,10 +2,13 @@
 <%@page import="java.util.List" %>
 <%@page import="com.petweb.model.Pet" %>
 <%@page import="java.util.Base64" %>
+<%@page import="java.util.Map" %>
+<%@page import="com.petweb.model.PetStay" %>
 <%
     // Dữ liệu do PetProfileServlet nạp sẵn (JSP không tự truy vấn DB nữa:
     // JDBCFilter chỉ cấp Connection cho URL trỏ tới servlet).
     List<Pet> pets = (List<Pet>) request.getAttribute("pets");
+    Map<Integer, List<PetStay>> stays = (Map<Integer, List<PetStay>>) request.getAttribute("stays");
     String loadError = (String) request.getAttribute("loadError");
 
     String flashMessage = (String) session.getAttribute("message");
@@ -45,9 +48,15 @@
                     <h1 class="h3 fw-bold mb-1">Danh sách thú cưng</h1>
                     <p class="mb-0" style="color: var(--text-body); font-size: 14.5px;">Quản lý hồ sơ và đặt lịch chăm sóc cho từng bé.</p>
                 </div>
-                <a class="btn btn-primary-blue fw-semibold px-4 py-2" href="<%=request.getContextPath()%>/addPet">
-                    <i class="fa-solid fa-plus me-1"></i> Thêm thú cưng
-                </a>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a class="btn btn-outline-blue fw-semibold px-3 py-2"
+                       href="<%=request.getContextPath()%>/myBookings">
+                        <i class="fa-regular fa-rectangle-list me-1"></i> Đơn của tôi
+                    </a>
+                    <a class="btn btn-primary-blue fw-semibold px-4 py-2" href="<%=request.getContextPath()%>/addPet">
+                        <i class="fa-solid fa-plus me-1"></i> Thêm thú cưng
+                    </a>
+                </div>
             </div>
 
             <% if (serviceLabel != null) { %>
@@ -74,6 +83,9 @@
                     for (Pet p : pets) {
                         String color = petColors[idx % petColors.length];
                         idx++;
+                        List<PetStay> petStays = (stays == null) ? null : stays.get(p.getPetId());
+                        PetStay stay = (petStays == null || petStays.isEmpty()) ? null : petStays.get(0);
+                        int moreStays = (petStays == null) ? 0 : petStays.size() - 1;
                 %>
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="pet-card d-flex flex-column gap-3">
@@ -92,6 +104,84 @@
                                 </div>
                             </div>
                         </div>
+                        <%-- Tình trạng lưu trú: mỗi bé chỉ ở một phòng tại một thời điểm.
+                             Bé chưa đặt phòng vẫn có một khối cùng chiều cao, để các thẻ
+                             trong cùng hàng không bị hụt một mảng trống ở giữa. --%>
+                        <% if (stay == null) { %>
+                        <div class="pet-stay pet-stay--none">
+                            <div class="pet-stay-top">
+                                <span class="pet-stay-dot pet-stay-dot--none">
+                                    <i class="fa-regular fa-moon"></i>
+                                </span>
+                                <div class="flex-grow-1">
+                                    <div class="pet-stay-state">Chưa đặt phòng</div>
+                                    <div class="pet-stay-room">Bé đang ở nhà cùng bạn</div>
+                                </div>
+                            </div>
+                            <div class="pet-stay-actions">
+                                <a class="pet-stay-link"
+                                   href="<%=request.getContextPath()%>/BookingServlet?petId=<%= p.getPetId()%>&amp;serviceType=hotel">
+                                    Đặt phòng cho bé
+                                </a>
+                            </div>
+                        </div>
+                        <% } else { %>
+                        <div class="pet-stay pet-stay--<%= stay.getStateColor() %>">
+                            <div class="pet-stay-top">
+                                <span class="pet-stay-dot bg-<%= stay.getStateColor() %>-tint text-<%= stay.getStateColor() %>">
+                                    <i class="fa-solid fa-door-open"></i>
+                                </span>
+                                <div class="flex-grow-1">
+                                    <div class="pet-stay-state"><%= stay.getStateText() %></div>
+                                    <div class="pet-stay-room">
+                                        <%= stay.getRoomName() %> · <%= stay.getFormattedRange() %>
+                                    </div>
+                                    <% if (moreStays > 0) { %>
+                                    <a class="pet-stay-more"
+                                       href="<%=request.getContextPath()%>/myBookings?service=hotel&amp;petId=<%= p.getPetId() %>">
+                                        +<%= moreStays %> đợt đã đặt nữa
+                                    </a>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="pet-stay-actions">
+                                <a class="pet-stay-link"
+                                   href="<%=request.getContextPath()%>/invoice?bookingId=<%= stay.getBookingId() %>">
+                                    Đơn #<%= stay.getBookingId() %>
+                                </a>
+                                <% if (stay.isCheckOutable()) { %>
+                                <form action="<%=request.getContextPath()%>/bookingAction" method="post"
+                                      class="d-inline">
+                                    <input type="hidden" name="action" value="checkout">
+                                    <input type="hidden" name="bookingId" value="<%= stay.getBookingId() %>">
+                                    <input type="hidden" name="back" value="petProfile">
+                                    <button type="submit" class="pet-stay-btn">
+                                        <i class="fa-solid fa-right-from-bracket"></i> Trả phòng
+                                    </button>
+                                </form>
+                                <% } else if (stay.isCancellable()) { %>
+                                <%-- Chưa tới ngày nhận phòng thì chưa trả phòng được; muốn đổi
+                                     sang khoảng khác thì hủy đơn để nhả phòng ra. --%>
+                                <form action="<%=request.getContextPath()%>/bookingAction" method="post"
+                                      class="d-inline js-cancel-stay"
+                                      data-booking="<%= stay.getBookingId() %>">
+                                    <input type="hidden" name="action" value="cancel">
+                                    <input type="hidden" name="bookingId" value="<%= stay.getBookingId() %>">
+                                    <input type="hidden" name="back" value="petProfile">
+                                    <button type="submit" class="pet-stay-btn pet-stay-btn--warn">
+                                        <i class="fa-solid fa-xmark"></i> Hủy phòng
+                                    </button>
+                                </form>
+                                <% } else if (stay.isDraft()) { %>
+                                <a class="pet-stay-btn"
+                                   href="<%=request.getContextPath()%>/chooseService">
+                                    <i class="fa-solid fa-arrow-right"></i> Hoàn tất đơn
+                                </a>
+                                <% } %>
+                            </div>
+                        </div>
+                        <% } %>
+
                         <div class="pet-menu mt-auto">
                             <a class="pet-menu-item"
                                href="<%=request.getContextPath()%>/BookingServlet?petId=<%= p.getPetId()%><%= serviceQuery %>">
@@ -149,6 +239,7 @@
                 });
             });
         </script>
+        <script src="js/stay-actions.js"></script>
     </body>
 
 </html>

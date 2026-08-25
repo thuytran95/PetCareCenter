@@ -1,7 +1,7 @@
 <%-- Document : home Created on : Sep 6, 2025, 10:03:17 AM Author : Admin --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
-<%@page import="java.util.List, java.util.Base64, com.petweb.model.Pet, com.petweb.model.Appointment, com.petweb.model.Booking, com.petweb.model.HealthRecord" %>
+<%@page import="java.util.List, java.util.Base64, com.petweb.model.Pet, com.petweb.model.Appointment, com.petweb.model.Booking, com.petweb.model.HealthRecord, com.petweb.model.PetStay, java.util.Map" %>
 <!DOCTYPE html>
 <html>
 
@@ -191,6 +191,7 @@
 
     <%-- Khối chỉ hiện với khách đã đăng nhập; danh sách do HomeController nạp sẵn --%>
     <% List<Pet> myPets = (List<Pet>) request.getAttribute("myPets");
+       Map<Integer, List<PetStay>> homeStays = (Map<Integer, List<PetStay>>) request.getAttribute("stays");
        if (myPets != null) {
            String[] homePetColors = {"blue", "pink", "amber", "teal"}; %>
     <section class="my-pets">
@@ -224,7 +225,10 @@
                 <% int hIdx = 0;
                    for (Pet hp : myPets) {
                        String hc = homePetColors[hIdx % homePetColors.length];
-                       hIdx++; %>
+                       hIdx++;
+                       List<PetStay> hPetStays = (homeStays == null) ? null : homeStays.get(hp.getPetId());
+                       PetStay hStay = (hPetStays == null || hPetStays.isEmpty()) ? null : hPetStays.get(0);
+                       int hMoreStays = (hPetStays == null) ? 0 : hPetStays.size() - 1; %>
                 <div class="pet-slide">
                     <div class="pet-card d-flex flex-column gap-3">
                         <div class="d-flex align-items-center gap-3">
@@ -243,6 +247,82 @@
                                 </div>
                             </div>
                         </div>
+                        <%-- Tình trạng lưu trú, cùng dữ liệu với trang hồ sơ.
+                             Bé chưa đặt phòng vẫn có khối cùng chiều cao để các thẻ
+                             trong dải trượt không cao thấp lệch nhau. --%>
+                        <% if (hStay == null) { %>
+                        <div class="pet-stay pet-stay--none">
+                            <div class="pet-stay-top">
+                                <span class="pet-stay-dot pet-stay-dot--none">
+                                    <i class="fa-regular fa-moon"></i>
+                                </span>
+                                <div class="flex-grow-1">
+                                    <div class="pet-stay-state">Chưa đặt phòng</div>
+                                    <div class="pet-stay-room">Bé đang ở nhà cùng bạn</div>
+                                </div>
+                            </div>
+                            <div class="pet-stay-actions">
+                                <a class="pet-stay-link"
+                                   href="<%=request.getContextPath()%>/BookingServlet?petId=<%= hp.getPetId() %>&amp;serviceType=hotel">
+                                    Đặt phòng cho bé
+                                </a>
+                            </div>
+                        </div>
+                        <% } else { %>
+                        <div class="pet-stay pet-stay--<%= hStay.getStateColor() %>">
+                            <div class="pet-stay-top">
+                                <span class="pet-stay-dot bg-<%= hStay.getStateColor() %>-tint text-<%= hStay.getStateColor() %>">
+                                    <i class="fa-solid fa-door-open"></i>
+                                </span>
+                                <div class="flex-grow-1">
+                                    <div class="pet-stay-state"><%= hStay.getStateText() %></div>
+                                    <div class="pet-stay-room">
+                                        <%= hStay.getRoomName() %> · <%= hStay.getFormattedRange() %>
+                                    </div>
+                                    <% if (hMoreStays > 0) { %>
+                                    <a class="pet-stay-more"
+                                       href="<%=request.getContextPath()%>/myBookings?service=hotel&amp;petId=<%= hp.getPetId() %>">
+                                        +<%= hMoreStays %> đợt đã đặt nữa
+                                    </a>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="pet-stay-actions">
+                                <a class="pet-stay-link"
+                                   href="<%=request.getContextPath()%>/invoice?bookingId=<%= hStay.getBookingId() %>">
+                                    Đơn #<%= hStay.getBookingId() %>
+                                </a>
+                                <% if (hStay.isCheckOutable()) { %>
+                                <form action="<%=request.getContextPath()%>/bookingAction" method="post"
+                                      class="d-inline">
+                                    <input type="hidden" name="action" value="checkout">
+                                    <input type="hidden" name="bookingId" value="<%= hStay.getBookingId() %>">
+                                    <input type="hidden" name="back" value="home">
+                                    <button type="submit" class="pet-stay-btn">
+                                        <i class="fa-solid fa-right-from-bracket"></i> Trả phòng
+                                    </button>
+                                </form>
+                                <% } else if (hStay.isCancellable()) { %>
+                                <form action="<%=request.getContextPath()%>/bookingAction" method="post"
+                                      class="d-inline js-cancel-stay"
+                                      data-booking="<%= hStay.getBookingId() %>">
+                                    <input type="hidden" name="action" value="cancel">
+                                    <input type="hidden" name="bookingId" value="<%= hStay.getBookingId() %>">
+                                    <input type="hidden" name="back" value="home">
+                                    <button type="submit" class="pet-stay-btn pet-stay-btn--warn">
+                                        <i class="fa-solid fa-xmark"></i> Hủy phòng
+                                    </button>
+                                </form>
+                                <% } else if (hStay.isDraft()) { %>
+                                <a class="pet-stay-btn"
+                                   href="<%=request.getContextPath()%>/chooseService">
+                                    <i class="fa-solid fa-arrow-right"></i> Hoàn tất đơn
+                                </a>
+                                <% } %>
+                            </div>
+                        </div>
+                        <% } %>
+
                         <div class="pet-menu mt-auto">
                             <a class="pet-menu-item"
                                href="<%=request.getContextPath()%>/BookingServlet?petId=<%= hp.getPetId() %>">
@@ -369,9 +449,15 @@
                 </div>
 
                 <div class="col-12 col-lg-5">
-                    <h2 class="h5 fw-bold mb-3">
-                        <i class="fa-solid fa-receipt me-2" style="color:var(--amber);"></i>Hóa đơn gần đây
-                    </h2>
+                    <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                        <h2 class="h5 fw-bold mb-0">
+                            <i class="fa-solid fa-receipt me-2" style="color:var(--amber);"></i>Hóa đơn gần đây
+                        </h2>
+                        <%-- Chỗ này chỉ hiện vài đơn mới nhất, nên phải có lối sang xem đủ --%>
+                        <a class="dash-link" href="<%=request.getContextPath()%>/myBookings">
+                            Xem tất cả <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
 
                     <% if (recentBookings == null || recentBookings.isEmpty()) { %>
                     <div class="dash-empty">
@@ -781,6 +867,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>
     <script src="js/pet-slider.js"></script>
+    <script src="js/stay-actions.js"></script>
     <script src="js/contact-bubble.js"></script>
 </body>
 

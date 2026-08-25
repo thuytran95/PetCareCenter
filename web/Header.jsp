@@ -90,6 +90,10 @@
                                                     <a class="nav-link" href="${pageContext.request.contextPath}/petProfile">
                                                         <i class="fa-solid fa-paw me-1"></i>Thú cưng của tôi</a>
                                                 </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" href="${pageContext.request.contextPath}/myBookings">
+                                                        <i class="fa-regular fa-rectangle-list me-1"></i>Đơn của tôi</a>
+                                                </li>
                                             </c:if>
                                             <li class="nav-item">
                                                 <a class="nav-link" href="${pageContext.request.contextPath}/service?type=spa">Spa thú cưng</a>

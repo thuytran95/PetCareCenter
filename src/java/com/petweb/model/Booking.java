@@ -79,6 +79,25 @@ public class Booking {
     }
 
     /**
+     * Có trả phòng được không.
+     *
+     * Chỉ đơn còn hiệu lực, có dịch vụ lưu trú, và bé ĐÃ tới ngày nhận phòng.
+     * Trước ngày nhận phòng thì việc cần làm là hủy đơn chứ không phải trả phòng,
+     * nên nút này chưa hiện ra để khách khỏi bấm nhầm.
+     */
+    public boolean isCheckOutable() {
+        if (!STATUS_CONFIRMED.equals(status) && !STATUS_PAID.equals(status)) return false;
+        long now = System.currentTimeMillis();
+        for (BookingLine l : lines) {
+            if (l.isHotel() && l.getStartAt() != null && l.getStartAt().getTime() <= now
+                    && l.getEndAt() != null && l.getEndAt().getTime() > now) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Đơn QUÁ HẠN THANH TOÁN: đã chốt, chưa trả tiền, mà mọi mốc dịch vụ đã trôi qua.
      * Đây là trạng thái TÍNH RA lúc hiển thị chứ không lưu trong CSDL, nên luôn
      * đúng theo thời điểm xem, không phụ thuộc tác vụ nền có chạy hay chưa.

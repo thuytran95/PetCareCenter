@@ -4,11 +4,14 @@ import com.petweb.model.Booking;
 import com.petweb.model.BookingLine;
 import com.petweb.model.Appointment;
 import com.petweb.model.BookingLineItem;
+import com.petweb.model.PetStay;
 
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Truy cập các bảng booking / booking_line / booking_line_item.
@@ -42,6 +45,41 @@ public class BookingDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next() ? rs.getInt(1) : 0;
             }
+        }
+    }
+
+    /**
+     * Đơn nháp RỖNG mà khách này đã mở sẵn cho đúng bé này, nếu có.
+     *
+     * Mỗi lần bấm "Đặt lịch" mà tạo một dòng mới thì chỉ cần bấm rồi thoát vài
+     * lần là CSDL đầy đơn rỗng. Đơn rỗng chưa có dịch vụ nào nên không giữ chỗ,
+     * không có gì để mất — dùng lại chính nó là cách sạch nhất.
+     */
+    public static Integer findEmptyDraft(Connection conn, int userId, int petId)
+            throws SQLException {
+        String sql = """
+            SELECT b.booking_id
+            FROM booking b
+            WHERE b.user_id = ? AND b.pet_id = ? AND b.status = 'DRAFT'
+              AND NOT EXISTS (SELECT 1 FROM booking_line l WHERE l.booking_id = b.booking_id)
+            ORDER BY b.created_at DESC
+            LIMIT 1
+        """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, petId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : null;
+            }
+        }
+    }
+
+    /** Làm mới thời điểm tạo, để đơn dùng lại không bị tính là quá hạn ngay. */
+    public static void touchDraft(Connection conn, int bookingId) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(
+                "UPDATE booking SET created_at = now() WHERE booking_id = ? AND status = 'DRAFT'")) {
+            ps.setInt(1, bookingId);
+            ps.executeUpdate();
         }
     }
 
@@ -263,6 +301,175 @@ public class BookingDAO {
                 "UPDATE booking SET status = 'CANCELLED', cancelled_at = now()"
               + " WHERE booking_id = ? AND status IN ('CONFIRMED','PAID')")) {
             ps.setInt(1, bookingId);
+            return ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Điều kiện một đợt lưu trú còn hiệu lực, giống hệt quy tắc đếm phòng:
+     * đơn đã xác nhận / đã thanh toán, hoặc đơn nháp còn trong hạn giữ chỗ.
+     */
+    private static final String STAY_ACTIVE = """
+              AND (
+                    b.status IN ('CONFIRMED','PAID')
+                 OR (b.status = 'DRAFT'
+                     AND b.created_at > now() - (? || ' hours')::interval)
+              )
+        """;
+
+    private static final String STAY_COLUMNS = """
+            b.booking_id, l.line_id, b.pet_id, l.room_code,
+            COALESCE(rt.room_name, l.room_code) AS room_name,
+            l.start_at, l.end_at, b.status
+        """;
+
+    /**
+     * Đợt lưu trú của MỘT bé đang chồng lấn khoảng thời gian yêu cầu, nếu có.
+     *
+     * Một con vật chỉ ở được một phòng tại một thời điểm, nên đây là cách hệ
+     * thống chặn việc đặt hai phòng cùng lúc cho cùng một bé. Trả về đợt đang
+     * vướng để thông báo lỗi nói rõ bé đang ở phòng nào, tới ngày nào.
+     */
+    public static PetStay findOverlappingStayForPet(Connection conn, int petId,
+                                                    Timestamp start, Timestamp end)
+            throws SQLException {
+        String sql = "SELECT " + STAY_COLUMNS + """
+            FROM booking_line l
+            JOIN booking b ON b.booking_id = l.booking_id
+            LEFT JOIN room_type rt ON rt.room_code = l.room_code
+            WHERE l.service_type = 'HOTEL'
+              AND b.pet_id = ?
+              AND l.start_at < ?
+              AND l.end_at   > ?
+            """ + STAY_ACTIVE + " ORDER BY l.start_at LIMIT 1";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, petId);
+            ps.setTimestamp(2, end);
+            ps.setTimestamp(3, start);
+            ps.setString(4, String.valueOf(ServiceCatalogDAO.DRAFT_HOLD_HOURS));
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? mapStay(rs) : null;
+            }
+        }
+    }
+
+    /**
+     * Đợt lưu trú đáng quan tâm nhất của từng bé thuộc một chủ: đợt đang diễn ra,
+     * hoặc nếu không có thì đợt sắp tới gần nhất.
+     *
+     * Lấy một lần cho cả danh sách để trang hồ sơ không phải hỏi lại theo từng bé.
+     */
+    public static List<PetStay> findCurrentStaysByOwner(Connection conn, int userId)
+            throws SQLException {
+        String sql = "SELECT " + STAY_COLUMNS + """
+            FROM booking_line l
+            JOIN booking b ON b.booking_id = l.booking_id
+            LEFT JOIN room_type rt ON rt.room_code = l.room_code
+            WHERE l.service_type = 'HOTEL'
+              AND b.user_id = ?
+              AND b.pet_id IS NOT NULL
+              AND l.end_at > now()
+            """ + STAY_ACTIVE + """
+            ORDER BY b.pet_id, l.start_at
+        """;
+
+        List<PetStay> list = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setString(2, String.valueOf(ServiceCatalogDAO.DRAFT_HOLD_HOURS));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapStay(rs));
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Gom các đợt lưu trú theo từng bé, giữ nguyên thứ tự thời gian.
+     *
+     * Một bé có thể được đặt trước nhiều đợt không chồng lấn nhau, nên thẻ thú
+     * cưng hiện đợt đầu tiên và cho biết còn bao nhiêu đợt nữa, thay vì âm thầm
+     * giấu đi những đợt còn lại.
+     */
+    public static Map<Integer, List<PetStay>> groupStaysByPet(List<PetStay> stays) {
+        Map<Integer, List<PetStay>> map = new LinkedHashMap<>();
+        for (PetStay s : stays) {
+            map.computeIfAbsent(s.getPetId(), k -> new ArrayList<>()).add(s);
+        }
+        return map;
+    }
+
+    /**
+     * Toàn bộ lịch sử đặt lịch của một khách, kèm các dòng dịch vụ.
+     *
+     * Truyền petId khác null để chỉ lấy đơn của đúng một bé. Đơn nháp bị bỏ qua
+     * vì đó là thứ khách chưa chốt, không phải đơn đã đặt.
+     */
+    public static List<Booking> findHistory(Connection conn, int userId, Integer petId)
+            throws SQLException {
+        StringBuilder sql = new StringBuilder("SELECT " + BOOKING_COLUMNS
+                + " FROM booking WHERE user_id = ? AND status <> 'DRAFT'");
+        if (petId != null) sql.append(" AND pet_id = ?");
+        // Thêm booking_id làm mốc phụ: hai đơn tạo trong cùng một giây có
+        // created_at bằng nhau, thiếu mốc này thì thứ tự hiển thị đảo lung tung
+        // giữa các lần tải trang.
+        sql.append(" ORDER BY created_at DESC, booking_id DESC");
+
+        List<Booking> list = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            ps.setInt(1, userId);
+            if (petId != null) ps.setInt(2, petId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapBooking(rs));
+            }
+        }
+        for (Booking b : list) {
+            b.setLines(findLines(conn, b.getBookingId()));
+        }
+        return list;
+    }
+
+    private static PetStay mapStay(ResultSet rs) throws SQLException {
+        PetStay s = new PetStay();
+        s.setBookingId(rs.getInt("booking_id"));
+        s.setLineId(rs.getInt("line_id"));
+        s.setPetId(rs.getInt("pet_id"));
+        s.setRoomCode(rs.getString("room_code"));
+        s.setRoomName(rs.getString("room_name"));
+        s.setStartAt(rs.getTimestamp("start_at"));
+        s.setEndAt(rs.getTimestamp("end_at"));
+        s.setBookingStatus(rs.getString("status"));
+        return s;
+    }
+
+    /** Đánh dấu đơn đã hoàn tất; chỉ tác dụng với đơn đang có hiệu lực. */
+    public static int markCompleted(Connection conn, int bookingId) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(
+                "UPDATE booking SET status = 'COMPLETED'"
+              + " WHERE booking_id = ? AND status IN ('CONFIRMED','PAID')")) {
+            ps.setInt(1, bookingId);
+            return ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Rút ngắn thời gian lưu trú của các dòng khách sạn về thời điểm trả phòng.
+     *
+     * Khi khách trả phòng sớm, phần thời gian còn lại phải được nhả ra ngay cho
+     * người khác đặt. Chỉ đụng tới dòng đang còn hiệu lực trong tương lai —
+     * dòng đã kết thúc thì giữ nguyên để lịch sử không bị viết lại.
+     */
+    public static int shortenHotelStay(Connection conn, int bookingId, Timestamp checkedOutAt)
+            throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(
+                "UPDATE booking_line SET end_at = ?"
+              + " WHERE booking_id = ? AND service_type = 'HOTEL'"
+              + "   AND end_at > ? AND start_at < ?")) {
+            ps.setTimestamp(1, checkedOutAt);
+            ps.setInt(2, bookingId);
+            ps.setTimestamp(3, checkedOutAt);
+            ps.setTimestamp(4, checkedOutAt);
             return ps.executeUpdate();
         }
     }
