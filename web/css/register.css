@@ -1,8 +1,8 @@
+@import "common.css";
+
 .register-container {
   height: 100vh;
 }
-
-@import "common.css";
 
 .register-container-form {
   height: 100%;

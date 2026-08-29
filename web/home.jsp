@@ -622,14 +622,8 @@
                                         style="width: 84px; height: 84px; object-fit: cover;">
                                 </a>
                             </div>
-                            <h5 class="mb-1">Hoàng Văn Bình</h5>
+                            <h5 class="mb-1">Nguyễn Thị Chiên</h5>
                             <div class="small">Trưởng nhóm</div>
-                            <div class="small muted mb-3">
-                                <a class="link-underline link-underline-opacity-0 muted text-truncate d-inline-block"
-                                    href="https://caodangcodientaybac.edu.vn/" target="_blank">
-                                    Trường Cao Đẳng Cơ Điện Tây Bắc
-                                </a>
-                            </div>
                             <div class="w-100 text-start small">
                                 <div class="d-flex align-items-center gap-2 icon-line mb-2">
                                     <i class="bi bi-person-badge"></i>
@@ -669,13 +663,7 @@
 
                             </div>
                             <h5 class="mb-1">Trần Thu Thủy</h5>
-                            <div class="small">Frontend</div>
-                            <div class="small muted mb-3">
-                                <a class="link-underline link-underline-opacity-0 muted text-truncate d-inline-block"
-                                    href="https://kaopiz.com/en/" target="_blank">
-                                    Công ty cổ phần Kaopiz software
-                                </a>
-                            </div>
+                            <div class="small">Frontend</div>                           
                             <div class="w-100 text-start small">
                                 <div class="d-flex align-items-center gap-2 icon-line mb-2">
                                     <i class="bi bi-person-badge"></i>
@@ -706,52 +694,6 @@
                     <div class="card member-card text-center p-3">
                         <div class="d-flex flex-column align-items-center">
                             <div class="avatar mb-3">
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#modalTrang">
-                                    <img src="image/tranthutrang.jpg" alt="Trần Thu Trang"
-                                        class="rounded-circle"
-                                        style="width: 84px; height: 84px; object-fit: cover;">
-                                </a>
-
-                            </div>
-                            <h5 class="mb-1">Trần Thu Trang</h5>
-                            <div class="small">BA</div>
-                            <div class="small muted mb-3">
-                                <a class="link-underline link-underline-opacity-0 muted text-truncate d-inline-block"
-                                    href="https://fptsoftware.com" target="_blank">
-                                    FPT Software
-                                </a>
-                            </div>
-                            <div class="w-100 text-start small">
-                                <div class="d-flex align-items-center gap-2 icon-line mb-2">
-                                    <i class="bi bi-person-badge"></i>
-                                    <span>MSV: K23DTCN552</span>
-                                </div>
-                                <div class="d-flex align-items-center gap-2 icon-line mb-2">
-                                    <i class="bi bi-calendar-event"></i>
-                                    <span> 20/03/1999</span>
-                                </div>
-                                <div class="d-flex align-items-center gap-2 icon-line mb-2">
-                                    <i class="bi bi-mortarboard"></i>
-                                    <span>Lớp: D23TXCN09-K</span>
-                                </div>
-                                <div class="d-flex align-items-center gap-2 icon-line mb-2">
-                                    <i class="bi bi-envelope"></i>
-                                    <a class="text-decoration-none text-black text-truncate d-inline-block"
-                                        href="mailto:trangthutran203@gmail.com">trangthutran203@gmail.com</a>
-                                </div>
-                                <div class="d-flex align-items-center gap-2 icon-line mb-2">
-                                    <i class="bi bi-telephone"></i>
-                                    <span>0944735211</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-6 col-lg-3">
-                    <div class="card member-card text-center p-3">
-                        <div class="d-flex flex-column align-items-center">
-                            <div class="avatar mb-3">
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#modalDuyet">
                                     <img src="image/havanduyet.jpg" alt="Hà Văn Duyệt"
                                         class="rounded-circle"
@@ -759,13 +701,7 @@
                                 </a>
                             </div>
                             <h5 class="mb-1">Hà Văn Duyệt</h5>
-                            <div class="small">Backend</div>
-                            <div class="small muted mb-3">
-                                <a class="link-underline link-underline-opacity-0 muted text-truncate d-inline-block"
-                                    href="https://gcool.com.vn/" target="_blank">
-                                    Gcool
-                                </a>
-                            </div>
+                            <div class="small">Backend</div>                           
                             <div class="w-100 text-start small">
                                 <div class="d-flex align-items-center gap-2 icon-line mb-2">
                                     <i class="bi bi-person-badge"></i>
