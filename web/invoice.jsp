@@ -246,7 +246,7 @@
                     <a href="<%=request.getContextPath()%>/petProfile" class="btn-back flex-fill justify-content-center">
                         <i class="fa-solid fa-paw"></i> Hồ sơ thú cưng
                     </a>
-                    <a href="<%=request.getContextPath()%>/home" class="btn btn-service text-center text-decoration-none">
+                    <a href="<%=request.getContextPath()%>/" class="btn btn-service text-center text-decoration-none">
                         Về trang chủ
                     </a>
                 </div>

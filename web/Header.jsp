@@ -13,7 +13,7 @@
                                     <div class="col-3">
                                         <div class="d-flex gap-1 align-items-center justify-content-center"
                                             style="width: fit-content">
-                                            <a href="${pageContext.request.contextPath}/home" class="text-primary-blue" style="font-size: 30px;">
+                                            <a href="${pageContext.request.contextPath}/" class="text-primary-blue" style="font-size: 30px;">
                                                 <i class="fa-solid fa-paw"></i>
                                             </a>
                                             <div class="header-brand-name">Pet-Care</div>
@@ -90,7 +90,7 @@
                                     <div class="collapse navbar-collapse" id="navbarNav">
                                         <ul class="navbar-nav w-100 justify-content-center gap-2">
                                             <li class="nav-item">
-                                                <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/home">Trang
+                                                <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/">Trang
                                                     chủ</a>
                                             </li>
                                             <c:if test="${user != null}">

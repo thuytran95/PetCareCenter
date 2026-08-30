@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  * thấy phần giới thiệu dịch vụ — các thuộc tính bên dưới không được đặt nên
  * những khối đó không hiển thị.
  */
-@WebServlet(urlPatterns = {"/home"})
+@WebServlet(urlPatterns = {"", "/index", "/home"})
 public class HomeController extends HttpServlet {
 
     private static final int MAX_UPCOMING = 4;
@@ -67,7 +67,8 @@ public class HomeController extends HttpServlet {
                         "Không tải được bảng tin trang chủ cho userId=" + user.getId(), e);
             }
         }
-        request.getRequestDispatcher("/home.jsp").forward(request, response);
+        request.setAttribute("fromHomeController", Boolean.TRUE);
+        request.getRequestDispatcher("/index.jsp").forward(request, response);
     }
 
     @Override

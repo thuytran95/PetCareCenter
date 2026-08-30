@@ -86,8 +86,8 @@ public class BookingActionServlet extends HttpServlet {
         String back = request.getParameter("back");
         if ("petProfile".equals(back)) {
             response.sendRedirect(request.getContextPath() + "/petProfile");
-        } else if ("home".equals(back)) {
-            response.sendRedirect(request.getContextPath() + "/home");
+        } else if ("home".equals(back) || "index".equals(back)) {
+            response.sendRedirect(request.getContextPath() + "/");
         } else if ("myBookings".equals(back)) {
             response.sendRedirect(request.getContextPath() + "/myBookings");
         } else {

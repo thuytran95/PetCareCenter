@@ -18,7 +18,7 @@
             style="width: fit-content"
           >
             <a
-              href="${pageContext.request.contextPath}/home"
+              href="${pageContext.request.contextPath}/"
               class="text-primary-blue fs-6"
             >
               <i class="fa-solid fa-paw"></i>

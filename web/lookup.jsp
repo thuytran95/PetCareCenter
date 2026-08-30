@@ -71,7 +71,7 @@
                     </small>
 
                     <div class="service-actions">
-                        <a href="<%=request.getContextPath()%>/home" class="btn-back">
+                        <a href="<%=request.getContextPath()%>/" class="btn-back">
                             <i class="fa-solid fa-arrow-left"></i> Trang chủ
                         </a>
                         <button type="submit" class="btn btn-service">Tra cứu</button>

@@ -277,7 +277,7 @@ public class HealthRecordTest {
     static void checkRouting() {
         checkMapping("com.petweb.controller.ChooseServiceServlet", "/chooseService");
         checkMapping("com.petweb.controller.PetHealthServlet", "/petHealth");
-        checkMapping("com.petweb.controller.HomeController", "/home");
+        checkMapping("com.petweb.controller.HomeController", "");
         checkMapping("com.petweb.controller.BookingLookupServlet", "/lookup");
     }
 
