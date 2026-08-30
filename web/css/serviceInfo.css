@@ -2,9 +2,14 @@
 
 /* ===================================================================
    Trang giới thiệu dịch vụ (/service?type=...)
-   Bốn dịch vụ dùng chung khuôn này, chỉ khác biến màu theo lớp
-   svc-hero--<màu> và các lớp tiện ích bg-*-tint / text-* trong common.css
+   Dùng chung theme primary-blue như trang chủ
    =================================================================== */
+
+/* Accent icon / badge — nền cam nhạt, chữ cam thương hiệu */
+.svc-accent {
+  background: var(--light-blue);
+  color: var(--primary-blue);
+}
 
 /* ----- Mở đầu ----- */
 .svc-hero {
@@ -60,41 +65,6 @@
   opacity: 0.85;
 }
 
-/* ----- Nút ----- */
-.btn-svc {
-  border-radius: 999px;
-  padding: 13px 28px;
-  font-weight: 600;
-  font-size: 15px;
-  color: white;
-  border: none;
-}
-
-.btn-svc:hover {
-  color: white;
-  filter: brightness(0.93);
-}
-
-.btn-svc--pink { background: var(--pink); }
-.btn-svc--blue { background: var(--blue); }
-.btn-svc--amber { background: var(--amber); }
-.btn-svc--teal { background: var(--teal); }
-
-.btn-svc-outline {
-  border-radius: 999px;
-  padding: 13px 28px;
-  font-weight: 600;
-  font-size: 15px;
-  border: 1.5px solid var(--border-warm);
-  background: white;
-  color: var(--text-body);
-}
-
-.btn-svc-outline:hover {
-  background: var(--bg-warm);
-  color: var(--text-body);
-}
-
 /* ----- Khối nội dung ----- */
 .svc-section {
   padding: 56px 0;
@@ -125,6 +95,7 @@
 .svc-highlight:hover {
   transform: translateY(-3px);
   box-shadow: 0 16px 32px -16px rgba(43, 36, 32, 0.18);
+  border-color: var(--primary-blue);
 }
 
 .svc-highlight-icon {
@@ -257,13 +228,21 @@
 }
 
 .svc-faq .accordion-button:not(.collapsed) {
-  background: var(--bg-warm);
+  background: var(--light-blue);
   color: #292524;
+}
+
+.svc-faq .accordion-button:not(.collapsed)::after {
+  filter: none;
 }
 
 .svc-faq .accordion-button:focus {
   box-shadow: none;
   border-color: var(--border-warm);
+}
+
+.svc-faq .accordion-button:hover {
+  color: var(--primary-blue);
 }
 
 .svc-faq .accordion-body {
@@ -282,6 +261,7 @@
   flex-wrap: wrap;
   border-radius: 24px;
   padding: 32px 36px;
+  background: var(--light-blue);
 }
 
 /* ----- Dịch vụ khác ----- */
@@ -303,6 +283,11 @@
   transform: translateY(-3px);
   box-shadow: 0 16px 32px -16px rgba(43, 36, 32, 0.18);
   color: inherit;
+  border-color: var(--primary-blue);
+}
+
+.svc-other:hover .fa-arrow-right {
+  color: var(--primary-blue);
 }
 
 .svc-other-icon {

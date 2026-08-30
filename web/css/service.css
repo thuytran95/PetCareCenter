@@ -153,6 +153,10 @@ body.service-page {
   margin-top: 28px;
 }
 
+.service-actions .btn-primary-blue {
+  flex: 1;
+}
+
 .btn-service {
   border-radius: 999px;
   font-weight: 600;
@@ -166,7 +170,7 @@ body.service-page {
 
 .btn-service:hover {
   color: white;
-  filter: brightness(0.93);
+  background-color: var(--primary-blue-hover);
 }
 
 .btn-service:disabled {
@@ -212,18 +216,21 @@ body.service-page {
 .theme-spa .item-option:has(input:checked) { border-color: var(--pink); background: var(--pink-tint); }
 .theme-spa .item-option input { accent-color: var(--pink); }
 .theme-spa .btn-service { background-color: var(--pink); }
+.theme-spa .btn-service:hover { background-color: #d8437a; }
 
 .theme-hotel .service-head-icon { background: var(--blue-tint); color: var(--blue); }
 .theme-hotel .item-price { color: var(--blue); }
 .theme-hotel .item-option:has(input:checked) { border-color: var(--blue); background: var(--blue-tint); }
 .theme-hotel .item-option input { accent-color: var(--blue); }
 .theme-hotel .btn-service { background-color: var(--blue); }
+.theme-hotel .btn-service:hover { background-color: #2d7ae0; }
 
 .theme-medical .service-head-icon { background: var(--teal-tint); color: var(--teal); }
 .theme-medical .item-price { color: var(--teal); }
 .theme-medical .item-option:has(input:checked) { border-color: var(--teal); background: var(--teal-tint); }
 .theme-medical .item-option input { accent-color: var(--teal); }
 .theme-medical .btn-service { background-color: var(--teal); }
+.theme-medical .btn-service:hover { background-color: #0e9d8f; }
 
 /* ===== Trang kết quả ===== */
 .result-total {

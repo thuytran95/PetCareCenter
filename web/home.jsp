@@ -602,7 +602,7 @@
                     <button type="submit" class="btn btn-primary-blue w-100 fw-semibold mt-3">
                         <i class="fa-solid fa-magnifying-glass me-2"></i>Tra cứu ngay
                     </button>
-                    <a class="gl-link" href="<%=request.getContextPath()%>/lookup">Tôi cần hướng dẫn thêm</a>
+                    <a class="gl-link" href="<%=request.getContextPath()%>/lookup">Hướng dẫn cách tra cứu</a>
                 </form>
             </div>
         </div>

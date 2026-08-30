@@ -12,9 +12,8 @@
                                     <div class="col-3">
                                         <div class="d-flex gap-1 align-items-center justify-content-center"
                                             style="width: fit-content">
-                                            <a href="${pageContext.request.contextPath}/home">
-                                                <img src="${pageContext.request.contextPath}/image/logo.svg" alt="logo"
-                                                    style="height: 48px" />
+                                            <a href="${pageContext.request.contextPath}/home" class="text-primary-blue" style="font-size: 30px;">
+                                                <i class="fa-solid fa-paw"></i>
                                             </a>
                                             <div class="header-brand-name">Pet-Care</div>
                                         </div>

@@ -80,7 +80,9 @@
                         <a href="<%=request.getContextPath()%>/home" class="btn-back">
                             <i class="fa-solid fa-arrow-left"></i> Trang chủ
                         </a>
-                        <button type="submit" class="btn btn-service">Tiếp tục chọn dịch vụ</button>
+                        <button type="submit" class="btn btn-primary-blue fw-semibold px-4 py-2">
+                            Tiếp tục chọn dịch vụ <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </button>
                     </div>
                 </form>
 
