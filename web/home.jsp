@@ -613,25 +613,25 @@
         <div class="container">
             <div class="heading text-main mb-4">Đội ngũ phát triển</div>
             <div class="row gy-4">
-                <div class="col-6 col-lg-3">
+                <div class="col-12 col-md-4">
                     <div class="card member-card text-center p-3">
                         <div class="d-flex flex-column align-items-center">
                             <div class="avatar mb-3">
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#modalBinh">
-                                    <img src="image/hoangvanbinh.jpg" alt="Hoàng Văn Bình" class="rounded-circle"
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#modalChien">
+                                    <img src="image/nguyenthichien.png" alt="Nguyễn Thị Chiên" class="rounded-circle"
                                         style="width: 84px; height: 84px; object-fit: cover;">
                                 </a>
                             </div>
                             <h5 class="mb-1">Nguyễn Thị Chiên</h5>
-                            <div class="small">Trưởng nhóm</div>
+                            <div class="small">BA</div>
                             <div class="w-100 text-start small">
                                 <div class="d-flex align-items-center gap-2 icon-line mb-2">
                                     <i class="bi bi-person-badge"></i>
-                                    <span>MSV: K23DTCN528</span>
+                                    <span>MSV: K23DTCN529</span>
                                 </div>
                                 <div class="d-flex align-items-center gap-2 icon-line mb-2">
                                     <i class="bi bi-calendar-event"></i>
-                                    <span>10/04/1985</span>
+                                    <span>13/02/1989</span>
                                 </div>
                                 <div class="d-flex align-items-center gap-2 icon-line mb-2">
                                     <i class="bi bi-mortarboard"></i>
@@ -651,7 +651,7 @@
 
                     </div>
                 </div>
-                <div class="col-6 col-lg-3">
+                <div class="col-12 col-md-4">
                     <div class="card member-card text-center p-3">
                         <div class="d-flex flex-column align-items-center">
                             <div class="avatar mb-3">
@@ -690,7 +690,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-lg-3">
+                <div class="col-12 col-md-4">
                     <div class="card member-card text-center p-3">
                         <div class="d-flex flex-column align-items-center">
                             <div class="avatar mb-3">
@@ -734,7 +734,7 @@
         <!-- Mỗi thành viên có modal riêng (trước đây cả 4 avatar dùng chung
              1 modal #myModal hardcode nội dung Hoàng Văn Bình -> bấm ai
              cũng ra đúng 1 người). -->
-        <div class="modal fade" id="modalBinh" tabindex="-1" aria-hidden="true">
+        <div class="modal fade" id="modalChien" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-fullscreen">
                 <div class="modal-content">
                     <div class="modal-header">
