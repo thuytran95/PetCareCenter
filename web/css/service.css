@@ -99,13 +99,42 @@ body.service-page {
   transform: translateY(-2px);
 }
 
-.item-option input {
+.item-option input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-  accent-color: var(--primary-blue);
   margin: 0;
   cursor: pointer;
+  border: 1.5px solid var(--border-warm);
+  border-radius: 5px;
+  background: #fff;
+  position: relative;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.item-option input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.item-option input[type="checkbox"]:checked {
+  background-color: var(--primary-blue);
+  border-color: var(--primary-blue);
+}
+
+.item-option input[type="checkbox"]:checked::after {
+  opacity: 1;
 }
 
 .item-name {
@@ -214,21 +243,30 @@ body.service-page {
 .theme-spa .service-head-icon { background: var(--pink-tint); color: var(--pink); }
 .theme-spa .item-price { color: var(--pink); }
 .theme-spa .item-option:has(input:checked) { border-color: var(--pink); background: var(--pink-tint); }
-.theme-spa .item-option input { accent-color: var(--pink); }
+.theme-spa .item-option input[type="checkbox"]:checked {
+  background-color: var(--pink);
+  border-color: var(--pink);
+}
 .theme-spa .btn-service { background-color: var(--pink); }
 .theme-spa .btn-service:hover { background-color: #d8437a; }
 
 .theme-hotel .service-head-icon { background: var(--blue-tint); color: var(--blue); }
 .theme-hotel .item-price { color: var(--blue); }
 .theme-hotel .item-option:has(input:checked) { border-color: var(--blue); background: var(--blue-tint); }
-.theme-hotel .item-option input { accent-color: var(--blue); }
+.theme-hotel .item-option input[type="checkbox"]:checked {
+  background-color: var(--blue);
+  border-color: var(--blue);
+}
 .theme-hotel .btn-service { background-color: var(--blue); }
 .theme-hotel .btn-service:hover { background-color: #2d7ae0; }
 
 .theme-medical .service-head-icon { background: var(--teal-tint); color: var(--teal); }
 .theme-medical .item-price { color: var(--teal); }
 .theme-medical .item-option:has(input:checked) { border-color: var(--teal); background: var(--teal-tint); }
-.theme-medical .item-option input { accent-color: var(--teal); }
+.theme-medical .item-option input[type="checkbox"]:checked {
+  background-color: var(--teal);
+  border-color: var(--teal);
+}
 .theme-medical .btn-service { background-color: var(--teal); }
 .theme-medical .btn-service:hover { background-color: #0e9d8f; }
 

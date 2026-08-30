@@ -137,6 +137,7 @@ public class BookingService {
 
         Booking booking = requireDraft(conn, bookingId);
         requireDate(bookingDate, "Vui lòng chọn ngày giờ đặt lịch.");
+        requireAdvanceBooking(bookingDate, 1, "Bạn phải đặt lịch trước ít nhất 1 ngày.");
         requireItems(itemIds);
 
         Map<Integer, SpaServiceItem> found = ServiceCatalogDAO.findSpaItemsByIds(conn, itemIds);
@@ -469,6 +470,16 @@ public class BookingService {
 
     private static void requireDate(Timestamp ts, String message) throws BookingException {
         if (ts == null) throw new BookingException(message);
+    }
+
+    /** Ngày đặt phải cách hiện tại ít nhất {@code days} ngày. */
+    private static void requireAdvanceBooking(Timestamp ts, int days, String message)
+            throws BookingException {
+        if (ts == null) return;
+        LocalDateTime earliest = LocalDateTime.now().plusDays(days);
+        if (ts.toLocalDateTime().isBefore(earliest)) {
+            throw new BookingException(message);
+        }
     }
 
     private static void requireItems(List<Integer> itemIds) throws BookingException {
