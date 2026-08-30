@@ -38,7 +38,7 @@ public class ServiceInfoServlet extends HttpServlet {
         ServicePage page = ServicePageCatalog.find(request.getParameter("type"));
         if (page == null) {
             // Mã dịch vụ không hợp lệ: đưa về trang chủ thay vì báo lỗi kỹ thuật
-            response.sendRedirect(request.getContextPath() + "/home");
+            response.sendRedirect(request.getContextPath() + "/");
             return;
         }
 

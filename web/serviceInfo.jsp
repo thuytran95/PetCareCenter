@@ -13,7 +13,6 @@
     List<MedicalServiceItem> medicalItems = (List<MedicalServiceItem>) request.getAttribute("medicalItems");
     List<RoomType> roomTypes = (List<RoomType>) request.getAttribute("roomTypes");
 
-    String c = svc.getColorName();
     String bookUrl = request.getContextPath() + "/BookingServlet?serviceType=" + svc.getBookingType();
 %>
 <!DOCTYPE html>
@@ -33,25 +32,25 @@
     <jsp:include page="Header.jsp"></jsp:include>
 
     <%-- Phần mở đầu --%>
-    <section class="svc-hero svc-hero--<%= c %>">
+    <section class="svc-hero">
         <div class="container">
             <div class="row align-items-center g-4">
                 <div class="col-12 col-lg-7">
-                    <div class="svc-hero-icon bg-<%= c %>-tint text-<%= c %>">
+                    <div class="svc-hero-icon svc-accent">
                         <i class="fa-solid <%= svc.getIconClass() %>"></i>
                     </div>
                     <h1 class="svc-hero-title"><%= svc.getTitle() %></h1>
                     <p class="svc-hero-tagline"><%= svc.getTagline() %></p>
                     <p class="svc-hero-intro"><%= svc.getIntro() %></p>
                     <div class="d-flex flex-wrap gap-3 mt-4">
-                        <a class="btn btn-svc btn-svc--<%= c %>" href="<%= bookUrl %>">
+                        <a class="btn btn-primary-blue fw-semibold px-4 py-2" href="<%= bookUrl %>">
                             Đặt lịch ngay <i class="fa-solid fa-arrow-right ms-1"></i>
                         </a>
-                        <a class="btn btn-svc-outline" href="#bang-gia">Xem bảng giá</a>
+                        <a class="btn btn-outline-blue fw-semibold px-4 py-2" href="#bang-gia">Xem bảng giá</a>
                     </div>
                 </div>
                 <div class="col-12 col-lg-5 d-none d-lg-block">
-                    <div class="svc-hero-art bg-<%= c %>-tint text-<%= c %>">
+                    <div class="svc-hero-art svc-accent">
                         <i class="fa-solid <%= svc.getIconClass() %>"></i>
                     </div>
                 </div>
@@ -67,7 +66,7 @@
                 <% for (ServicePage.Highlight h : svc.getHighlights()) { %>
                 <div class="col-12 col-sm-6 col-lg-3">
                     <div class="svc-highlight">
-                        <div class="svc-highlight-icon bg-<%= c %>-tint text-<%= c %>">
+                        <div class="svc-highlight-icon svc-accent">
                             <i class="fa-solid <%= h.getIcon() %>"></i>
                         </div>
                         <div class="fw-bold mb-1"><%= h.getTitle() %></div>
@@ -87,7 +86,7 @@
                 <% int stepNo = 1;
                    for (String step : svc.getSteps()) { %>
                 <li>
-                    <span class="svc-step-no bg-<%= c %>-tint text-<%= c %>"><%= stepNo++ %></span>
+                    <span class="svc-step-no svc-accent"><%= stepNo++ %></span>
                     <span><%= step %></span>
                 </li>
                 <% } %>
@@ -109,7 +108,7 @@
                             <div class="fw-semibold"><%= r.getRoomName() %></div>
                             <div class="svc-price-desc"><%= r.getDescription() == null ? "" : r.getDescription() %></div>
                         </div>
-                        <div class="svc-price-value text-<%= c %>">
+                        <div class="svc-price-value text-primary-blue">
                             <%= String.format("%,.0f", r.getPricePerDay()) %> đ<span>/ngày</span>
                         </div>
                     </div>
@@ -119,7 +118,7 @@
                     <% for (SpaServiceItem it : spaItems) { %>
                     <div class="svc-price-row">
                         <div class="fw-semibold"><%= it.getItemName() %></div>
-                        <div class="svc-price-value text-<%= c %>">
+                        <div class="svc-price-value text-primary-blue">
                             <%= String.format("%,.0f", it.getItemPrice()) %> đ
                         </div>
                     </div>
@@ -129,7 +128,7 @@
                     <% for (MedicalServiceItem it : medicalItems) { %>
                     <div class="svc-price-row">
                         <div class="fw-semibold"><%= it.getItemName() %></div>
-                        <div class="svc-price-value text-<%= c %>">
+                        <div class="svc-price-value text-primary-blue">
                             <%= String.format("%,.0f", it.getItemPrice()) %> đ
                         </div>
                     </div>
@@ -174,14 +173,14 @@
     <%-- Kêu gọi đặt lịch --%>
     <section class="svc-section">
         <div class="container">
-            <div class="svc-cta bg-<%= c %>-tint">
+            <div class="svc-cta">
                 <div>
                     <h2 class="h4 fw-bold mb-1">Sẵn sàng đặt lịch cho bé?</h2>
                     <p class="mb-0" style="color:var(--text-body);font-size:14.5px;">
                         Chọn thú cưng và thời gian phù hợp, chỉ mất chưa tới một phút.
                     </p>
                 </div>
-                <a class="btn btn-svc btn-svc--<%= c %>" href="<%= bookUrl %>">
+                <a class="btn btn-primary-blue fw-semibold px-4 py-2" href="<%= bookUrl %>">
                     Đặt lịch ngay <i class="fa-solid fa-arrow-right ms-1"></i>
                 </a>
             </div>
@@ -197,7 +196,7 @@
                        if (other.getCode().equals(svc.getCode())) continue; %>
                 <div class="col-12 col-sm-6 col-lg-4">
                     <a class="svc-other" href="<%=request.getContextPath()%>/service?type=<%= other.getCode() %>">
-                        <div class="svc-other-icon bg-<%= other.getColorName() %>-tint text-<%= other.getColorName() %>">
+                        <div class="svc-other-icon svc-accent">
                             <i class="fa-solid <%= other.getIconClass() %>"></i>
                         </div>
                         <div>

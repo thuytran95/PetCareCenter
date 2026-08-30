@@ -65,6 +65,10 @@ public class BookingActionServlet extends HttpServlet {
                 BookingService.cancel(conn, bookingId);
                 request.getSession().setAttribute("message",
                         "Đã hủy đơn #" + bookingId + ".");
+            } else if ("checkout".equals(action)) {
+                BookingService.checkOut(conn, bookingId);
+                request.getSession().setAttribute("message",
+                        "Đã trả phòng cho đơn #" + bookingId + ". Phòng đã được nhả ra cho khách khác.");
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Hành động không hợp lệ");
                 return;
@@ -77,7 +81,18 @@ public class BookingActionServlet extends HttpServlet {
             throw new ServletException(e);
         }
 
-        response.sendRedirect(request.getContextPath() + "/invoice?bookingId=" + bookingId);
+        // Bấm từ hồ sơ thú cưng hay trang chủ thì quay lại đúng chỗ đó,
+        // không quăng khách sang trang hóa đơn.
+        String back = request.getParameter("back");
+        if ("petProfile".equals(back)) {
+            response.sendRedirect(request.getContextPath() + "/petProfile");
+        } else if ("home".equals(back) || "index".equals(back)) {
+            response.sendRedirect(request.getContextPath() + "/");
+        } else if ("myBookings".equals(back)) {
+            response.sendRedirect(request.getContextPath() + "/myBookings");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/invoice?bookingId=" + bookingId);
+        }
     }
 
     /**

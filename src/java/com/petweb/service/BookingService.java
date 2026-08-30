@@ -29,7 +29,8 @@ import java.security.SecureRandom;
 public class BookingService {
 
     /** Đơn nháp bỏ dở quá số giờ này sẽ bị dọn (dùng bởi AutoStatusListener). */
-    public static final int DRAFT_EXPIRE_HOURS = 24;
+    /** Giữ nguyên tên cũ cho code sẵn có, giá trị lấy từ nơi quy tắc thực sự sống. */
+    public static final int DRAFT_EXPIRE_HOURS = ServiceCatalogDAO.DRAFT_HOLD_HOURS;
 
     // =====================================================================
     // Tạo đơn nháp
@@ -46,6 +47,15 @@ public class BookingService {
         Pet pet = PetDAO.findByIdAndOwner(conn, petId, userId);
         if (pet == null) {
             throw new BookingException("Không tìm thấy thú cưng này trong hồ sơ của bạn.");
+        }
+
+        // Khách hay bấm "Đặt lịch" rồi thoát ra, bấm lại, thoát tiếp. Nếu mỗi
+        // lần đều tạo một dòng mới thì CSDL đầy đơn rỗng. Đơn rỗng chưa giữ chỗ
+        // và chưa có gì để mất, nên dùng lại chính nó thay vì đẻ thêm dòng.
+        Integer existing = BookingDAO.findEmptyDraft(conn, userId, pet.getPetId());
+        if (existing != null) {
+            BookingDAO.touchDraft(conn, existing);
+            return existing;
         }
         return BookingDAO.insertDraftForUser(conn, userId, pet.getPetId(), pet.getName(), pet.getSpecies());
     }
@@ -85,11 +95,19 @@ public class BookingService {
         if (!checkOut.after(checkIn)) {
             throw new BookingException("Ngày trả phòng phải sau ngày nhận phòng.");
         }
+        long stayMs = checkOut.getTime() - checkIn.getTime();
+        if (stayMs < 2L * 60 * 60 * 1000) {
+            throw new BookingException("Thời gian lưu trú tối thiểu là 2 giờ.");
+        }
 
         RoomType room = ServiceCatalogDAO.findRoomType(conn, roomCode);
         if (room == null || !room.isActive()) {
             throw new BookingException("Loại phòng không hợp lệ.");
         }
+
+        // Một con vật chỉ ở được một phòng tại một thời điểm, nên bé đang có đợt
+        // lưu trú chồng lấn thì phải trả phòng trước rồi mới đặt tiếp được.
+        requirePetFree(conn, booking, checkIn, checkOut);
 
         // Còn phòng trống không? Đếm các đơn khác đang chiếm loại phòng này trong cùng khoảng.
         int busy = ServiceCatalogDAO.countOverlappingRooms(conn, roomCode, checkIn, checkOut, bookingId);
@@ -123,6 +141,7 @@ public class BookingService {
 
         Booking booking = requireDraft(conn, bookingId);
         requireDate(bookingDate, "Vui lòng chọn ngày giờ đặt lịch.");
+        requireAdvanceBooking(bookingDate, 1, "Bạn phải đặt lịch trước ít nhất 1 ngày.");
         requireItems(itemIds);
 
         Map<Integer, SpaServiceItem> found = ServiceCatalogDAO.findSpaItemsByIds(conn, itemIds);
@@ -300,6 +319,84 @@ public class BookingService {
         return booking;
     }
 
+    /**
+     * Trả phòng: kết thúc đợt lưu trú và nhả phòng ra ngay.
+     *
+     * Trả phòng sớm hơn dự kiến là chuyện thường — bé được đón về trước hạn.
+     * Khi đó phần thời gian còn lại phải trống ngay cho khách khác đặt, nên
+     * ngoài việc đóng đơn, các dòng khách sạn cũng được rút ngắn về đúng thời
+     * điểm trả phòng. Tiền đã chốt trên hóa đơn thì giữ nguyên, không tính lại,
+     * đúng như thông lệ của khách sạn.
+     */
+    public static Booking checkOut(Connection conn, int bookingId)
+            throws SQLException, BookingException {
+
+        Booking booking = BookingDAO.findByIdWithLines(conn, bookingId);
+        if (booking == null) {
+            throw new BookingException("Không tìm thấy đơn đặt lịch.");
+        }
+        if (booking.isCompleted()) {
+            throw new BookingException("Đơn này đã trả phòng rồi.");
+        }
+        if (!booking.isConfirmed() && !booking.isPaid()) {
+            throw new BookingException("Chỉ đơn đã xác nhận hoặc đã thanh toán mới trả phòng được.");
+        }
+        if (!hasHotelLine(booking)) {
+            throw new BookingException("Đơn này không có dịch vụ lưu trú để trả phòng.");
+        }
+
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        BookingDAO.shortenHotelStay(conn, bookingId, now);
+
+        int rows = BookingDAO.markCompleted(conn, bookingId);
+        if (rows == 0) {
+            throw new BookingException("Đơn vừa thay đổi trạng thái, vui lòng tải lại trang.");
+        }
+
+        booking.setStatus(Booking.STATUS_COMPLETED);
+        return booking;
+    }
+
+    /**
+     * Mỗi bé chỉ ở một phòng tại một thời điểm.
+     *
+     * Quy tắc chỉ cấm HAI ĐỢT CHỒNG LẤN nhau, chứ không cấm đặt trước cho lần
+     * sau: bé đang ở tới ngày 5 thì chủ vẫn đặt được phòng cho ngày 20, vì hai
+     * khoảng đó không giao nhau và bé hoàn toàn có thể ở cả hai. Cấm rộng hơn
+     * thế sẽ chặn luôn việc giữ chỗ trước, vốn là nhu cầu bình thường.
+     *
+     * Đơn của khách vãng lai không gắn hồ sơ thú cưng nên không kiểm tra được —
+     * cùng một cái tên có thể là hai con vật khác nhau của hai người khác nhau.
+     */
+    private static void requirePetFree(Connection conn, Booking booking,
+                                       Timestamp checkIn, Timestamp checkOut)
+            throws SQLException, BookingException {
+
+        if (booking.getPetId() == null) return;
+
+        PetStay clash = BookingDAO.findOverlappingStayForPet(
+                conn, booking.getPetId(), checkIn, checkOut);
+        if (clash == null) return;
+
+        String who = booking.getPetName() == null ? "Bé" : booking.getPetName();
+        if (clash.getBookingId() == booking.getBookingId()) {
+            throw new BookingException(who + " đã có phòng trong khoảng thời gian này ở"
+                    + " ngay đơn hiện tại (" + clash.getRoomName() + ", "
+                    + clash.getFormattedRange() + "). Mỗi bé chỉ ở được một phòng.");
+        }
+        throw new BookingException(who + " đang có phòng " + clash.getRoomName()
+                + " từ " + clash.getFormattedRange() + " (đơn #" + clash.getBookingId()
+                + "). Mỗi bé chỉ ở được một phòng tại một thời điểm — hãy trả phòng"
+                + " trước, hoặc chọn khoảng thời gian khác.");
+    }
+
+    private static boolean hasHotelLine(Booking booking) {
+        for (BookingLine l : booking.getLines()) {
+            if (l.isHotel()) return true;
+        }
+        return false;
+    }
+
     /** Tra cứu đơn cho khách vãng lai bằng mã tra cứu + số điện thoại đã dùng khi đặt. */
     public static Booking lookupGuestBooking(Connection conn, String code, String phone)
             throws SQLException, BookingException {
@@ -377,6 +474,16 @@ public class BookingService {
 
     private static void requireDate(Timestamp ts, String message) throws BookingException {
         if (ts == null) throw new BookingException(message);
+    }
+
+    /** Ngày đặt phải cách hiện tại ít nhất {@code days} ngày. */
+    private static void requireAdvanceBooking(Timestamp ts, int days, String message)
+            throws BookingException {
+        if (ts == null) return;
+        LocalDateTime earliest = LocalDateTime.now().plusDays(days);
+        if (ts.toLocalDateTime().isBefore(earliest)) {
+            throw new BookingException(message);
+        }
     }
 
     private static void requireItems(List<Integer> itemIds) throws BookingException {

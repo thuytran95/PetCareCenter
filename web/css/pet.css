@@ -472,3 +472,136 @@
   .pet-slider-nav--prev { left: -6px; }
   .pet-slider-nav--next { right: -6px; }
 }
+
+/* ===== Tình trạng lưu trú trên thẻ thú cưng ===== */
+.pet-stay {
+  border: 1px solid var(--border-warm);
+  border-left-width: 3px;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #ffffff;
+}
+
+/* Màu viền trái khớp với màu chấm biểu tượng bên trong.
+   Lưu ý --primary-blue thực ra là màu cam thương hiệu, nên trạng thái
+   "chờ nhận phòng" dùng --blue để đúng tông với chấm. */
+.pet-stay--teal { border-left-color: var(--teal); }
+.pet-stay--blue { border-left-color: var(--blue); }
+.pet-stay--pink { border-left-color: var(--pink); }
+.pet-stay--amber { border-left-color: var(--amber); }
+
+/* Bé chưa đặt phòng: cùng khung, cùng chiều cao, nhưng nhạt màu để
+   không tranh sự chú ý với những bé đang thực sự có lịch. */
+.pet-stay--none {
+  border-style: dashed;
+  border-left-style: dashed;
+  border-left-color: var(--border-warm);
+  background: var(--bg-warm);
+}
+
+.pet-stay--none .pet-stay-state { color: var(--text-body); }
+
+.pet-stay-dot--none {
+  background: #ffffff;
+  border: 1px dashed var(--border-warm);
+  color: var(--text-body);
+}
+
+.pet-stay-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.pet-stay-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex: none;
+}
+
+.pet-stay-state {
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.pet-stay-room {
+  font-size: 11.5px;
+  color: var(--text-body);
+  line-height: 1.4;
+}
+
+.pet-stay-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.pet-stay-link {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary-blue);
+  text-decoration: none;
+}
+
+.pet-stay-link:hover { text-decoration: underline; }
+
+.pet-stay-btn {
+  border: 1px solid var(--primary-blue);
+  background: #ffffff;
+  color: var(--primary-blue);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease;
+}
+
+.pet-stay-btn:hover {
+  background: var(--primary-blue);
+  color: #ffffff;
+}
+
+.pet-stay-btn--warn {
+  border-color: var(--pink);
+  color: var(--pink);
+}
+
+.pet-stay-btn--warn:hover {
+  background: var(--pink);
+  color: #ffffff;
+}
+
+/* Cùng chiều cao ở mọi trạng thái, để các thẻ trong một hàng không lệch nhau */
+.pet-stay { min-height: 108px; display: flex; flex-direction: column; }
+.pet-stay-actions { min-height: 30px; margin-top: auto; }
+.pet-stay-state { min-height: 18px; }
+
+/* Liên kết dạng nút cần căn giữa như thẻ button thật */
+a.pet-stay-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+}
+
+/* Bé được đặt trước nhiều đợt: cho biết còn bao nhiêu, đừng giấu đi */
+.pet-stay-more {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--primary-blue);
+  text-decoration: none;
+  border-bottom: 1px dashed currentColor;
+}
+
+.pet-stay-more:hover { color: var(--primary-blue); opacity: .8; }

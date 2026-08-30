@@ -30,8 +30,8 @@
             <div class="service-body">
                 <%
                     List<SpaServiceItem> allItems = (List<SpaServiceItem>) request.getAttribute("allItems");
-                    LocalDateTime now = LocalDateTime.now();
-                    String bookingDate = now.toString().substring(0,16);
+                    LocalDateTime minBooking = LocalDateTime.now().plusDays(1).withSecond(0).withNano(0);
+                    String minBookingDate = minBooking.toString().substring(0, 16);
                     String error = (String) request.getAttribute("error");
                 %>
 
@@ -65,8 +65,11 @@
                     </div>
 
                     <div class="service-section-label">Ngày &amp; giờ đặt lịch</div>
-                    <input type="datetime-local" name="bookingDate" class="form-control"
-                           value="<%= bookingDate %>" min="<%= bookingDate %>" required>
+                    <input type="datetime-local" id="bookingDate" name="bookingDate" class="form-control"
+                           value="<%= minBookingDate %>" min="<%= minBookingDate %>" required>
+                    <div id="bookingDateError" class="service-alert" style="margin-top:10px;margin-bottom:0;display:none;" role="alert">
+                        <i class="fa-solid fa-circle-exclamation"></i> Bạn phải đặt lịch trước ít nhất 1 ngày.
+                    </div>
 
                     <div class="service-actions">
                         <a href="<%=request.getContextPath()%>/chooseService" class="btn-back">
@@ -89,5 +92,38 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/booking-summary.js"></script>
+<script>
+(function () {
+    var form = document.querySelector("form[data-summary-form]");
+    var input = document.getElementById("bookingDate");
+    var errorEl = document.getElementById("bookingDateError");
+    if (!form || !input || !errorEl) return;
+
+    var minMs = new Date(input.min).getTime();
+
+    function isValid() {
+        if (!input.value) return false;
+        return new Date(input.value).getTime() >= minMs;
+    }
+
+    function setError(show) {
+        errorEl.style.display = show ? "flex" : "none";
+        input.setCustomValidity(show ? "Bạn phải đặt lịch trước ít nhất 1 ngày." : "");
+    }
+
+    function validate() {
+        var ok = isValid();
+        setError(!ok);
+        return ok;
+    }
+
+    input.addEventListener("input", validate);
+    input.addEventListener("change", validate);
+    form.addEventListener("submit", function (e) {
+        if (!validate()) e.preventDefault();
+    });
+    validate();
+})();
+</script>
 </body>
 </html>

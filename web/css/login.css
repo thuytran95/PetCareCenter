@@ -1,3 +1,5 @@
+@import "common.css";
+
 .login-container {
   padding: 48px 0 48px 48px;
   position: relative;
@@ -9,8 +11,6 @@
   display: flex;
   align-items: center;
 }
-
-@import "common.css";
 
 .login-container-form {
   height: 100%;

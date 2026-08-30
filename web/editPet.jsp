@@ -5,7 +5,7 @@
 %>
     <%@ page import="com.petweb.model.Pet, java.util.Base64" %>
 
-        <% Pet pet=(Pet) request.getAttribute("pet"); if (pet==null) { response.sendRedirect("index.jsp"); return; } %>
+        <% Pet pet=(Pet) request.getAttribute("pet"); if (pet==null) { response.sendRedirect(request.getContextPath() + "/"); return; } %>
 
             <!DOCTYPE html>
             <html lang="vi">

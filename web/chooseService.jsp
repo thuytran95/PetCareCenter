@@ -47,7 +47,7 @@
 
             <%-- Thanh điều hướng: luôn có lối về trang chủ, không bắt bấm Back trình duyệt --%>
             <div class="cs-topbar">
-                <a class="cs-home" href="<%=request.getContextPath()%>/home">
+                <a class="cs-home" href="<%=request.getContextPath()%>/">
                     <i class="fa-solid fa-arrow-left"></i> Về trang chủ
                 </a>
                 <div class="cs-steps">
@@ -79,7 +79,7 @@
                     <a href="<%=request.getContextPath()%>/petProfile" class="btn btn-service text-decoration-none">
                         <i class="fa-solid fa-paw me-2"></i>Chọn thú cưng để đặt lịch
                     </a>
-                    <a href="<%=request.getContextPath()%>/home" class="btn-back">
+                    <a href="<%=request.getContextPath()%>/" class="btn-back">
                         <i class="fa-solid fa-house"></i> Về trang chủ
                     </a>
                 </div>

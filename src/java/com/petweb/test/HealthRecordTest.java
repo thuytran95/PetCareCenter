@@ -105,14 +105,15 @@ public class HealthRecordTest {
         // ---------- 2. Ghi sổ khi thanh toán ----------
         System.out.println("\n-- Nhom 2: thanh toan don y te thi tu ghi so --");
 
-        // Lay mot tai khoan DA co thu cung, vi so suc khoe gan voi ho so thu cung
-        int userId = scalarInt(conn,
-                "SELECT u.id FROM user_account u JOIN pet p ON p.user_id = u.id"
-                + " ORDER BY u.id LIMIT 1");
-        int petId = scalarInt(conn,
-                "SELECT pet_id FROM pet WHERE user_id = " + userId + " ORDER BY pet_id LIMIT 1");
-        check("co san user va pet de thu", userId > 0 && petId > 0,
+        int userId = scalarInt(conn, "SELECT id FROM user_account ORDER BY id LIMIT 1");
+        // Tao rieng mot thu cung cho lan chay nay. Neu dung thu cung co san thi
+        // ket qua phu thuoc vao so suc khoe that cua no: chi can no da co mot ban
+        // ghi cung hang muc voi ngay thuc hien moi hon la truy van nhac han se
+        // chon ban ghi kia, va bai kiem thu that bai du tinh nang van dung.
+        int petId = insertScratchPet(conn, userId);
+        check("tao duoc thu cung rieng de thu", userId > 0 && petId > 0,
                 "userId=" + userId + " petId=" + petId);
+        eq("thu cung moi tao co so suc khoe trong", 0, HealthRecordDAO.countByPet(conn, petId));
 
         int before = HealthRecordDAO.countByPet(conn, petId);
 
@@ -276,7 +277,7 @@ public class HealthRecordTest {
     static void checkRouting() {
         checkMapping("com.petweb.controller.ChooseServiceServlet", "/chooseService");
         checkMapping("com.petweb.controller.PetHealthServlet", "/petHealth");
-        checkMapping("com.petweb.controller.HomeController", "/home");
+        checkMapping("com.petweb.controller.HomeController", "");
         checkMapping("com.petweb.controller.BookingLookupServlet", "/lookup");
     }
 
@@ -384,6 +385,24 @@ public class HealthRecordTest {
     }
 
     // ----- tiện ích -----
+
+    /**
+     * Tạo một thú cưng tạm cho chủ đã cho, chỉ sống trong giao dịch của lần chạy
+     * này rồi bị rollback. Nhờ vậy bài kiểm thử không dựa vào hồ sơ có sẵn trong
+     * CSDL và cho kết quả như nhau ở mọi máy.
+     */
+    static int insertScratchPet(Connection c, int userId) throws SQLException {
+        String sql = "INSERT INTO pet (name, species, user_id) VALUES (?,?,?) RETURNING pet_id";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, "Be Kiem Thu");
+            ps.setString(2, "Chó");
+            ps.setInt(3, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : -1;
+            }
+        }
+    }
+
     static boolean tableExists(Connection c, String t) throws SQLException {
         return scalarInt(c, "SELECT count(*) FROM information_schema.tables"
                 + " WHERE table_name = '" + t + "'") > 0;

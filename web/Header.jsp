@@ -1,4 +1,5 @@
 <%@page import="com.petweb.model.UserAccount" %>
+<%@page import="java.util.Base64" %>
     <%@page import="com.petweb.utils.DBUtils" %>
         <%@page import="com.petweb.utils.ConnectionUtils" %>
             <%@ page import="java.sql.Connection" %>
@@ -12,9 +13,8 @@
                                     <div class="col-3">
                                         <div class="d-flex gap-1 align-items-center justify-content-center"
                                             style="width: fit-content">
-                                            <a href="${pageContext.request.contextPath}/home">
-                                                <img src="${pageContext.request.contextPath}/image/logo.svg" alt="logo"
-                                                    style="height: 48px" />
+                                            <a href="${pageContext.request.contextPath}/" class="text-primary-blue" style="font-size: 30px;">
+                                                <i class="fa-solid fa-paw"></i>
                                             </a>
                                             <div class="header-brand-name">Pet-Care</div>
                                         </div>
@@ -39,9 +39,17 @@
                                         <c:if test="${user!= null}">
                                             <div class="d-flex align-items-stretch gap-2 header-account">
                                                 <span
-                                                    class="circle circle-primary-blue d-flex justify-content-center align-items-center"
+                                                    class="circle circle-primary-blue d-flex justify-content-center align-items-center overflow-hidden"
                                                     title="${user.fullName}">
-                                                    <i class="fa-regular fa-user"></i>
+                                                    <c:choose>
+                                                        <c:when test="${user.avatar != null}">
+                                                            <img src="data:image/png;base64,<%= Base64.getEncoder().encodeToString(((UserAccount) pageContext.findAttribute("user")).getAvatar()) %>"
+                                                                alt="" style="width: 100%; height: 100%; object-fit: cover;" />
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <i class="fa-regular fa-user"></i>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </span>
                                                 <span>${user.userName}</span>
                                                 <a class="link-underline link-underline-opacity-0 text-primary-blue"
@@ -82,13 +90,17 @@
                                     <div class="collapse navbar-collapse" id="navbarNav">
                                         <ul class="navbar-nav w-100 justify-content-center gap-2">
                                             <li class="nav-item">
-                                                <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/home">Trang
+                                                <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/">Trang
                                                     chủ</a>
                                             </li>
                                             <c:if test="${user != null}">
                                                 <li class="nav-item">
                                                     <a class="nav-link" href="${pageContext.request.contextPath}/petProfile">
                                                         <i class="fa-solid fa-paw me-1"></i>Thú cưng của tôi</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" href="${pageContext.request.contextPath}/myBookings">
+                                                        <i class="fa-regular fa-rectangle-list me-1"></i>Đơn của tôi</a>
                                                 </li>
                                             </c:if>
                                             <li class="nav-item">

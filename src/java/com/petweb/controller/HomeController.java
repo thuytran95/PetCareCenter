@@ -2,6 +2,7 @@ package com.petweb.controller;
 
 import com.petweb.dao.BookingDAO;
 import com.petweb.dao.HealthRecordDAO;
+import com.petweb.model.PetStay;
 import com.petweb.dao.PetDAO;
 import com.petweb.model.UserAccount;
 import com.petweb.utils.MyUtils;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +28,7 @@ import java.util.logging.Logger;
  * thấy phần giới thiệu dịch vụ — các thuộc tính bên dưới không được đặt nên
  * những khối đó không hiển thị.
  */
-@WebServlet(urlPatterns = {"/home"})
+@WebServlet(urlPatterns = {"", "/index", "/home"})
 public class HomeController extends HttpServlet {
 
     private static final int MAX_UPCOMING = 4;
@@ -47,6 +49,11 @@ public class HomeController extends HttpServlet {
         if (user != null && conn != null) {
             try {
                 request.setAttribute("myPets", PetDAO.findByOwner(conn, user.getId()));
+
+                // Toàn bộ đợt lưu trú còn hiệu lực, gom theo bé — cùng dữ liệu
+                // với trang hồ sơ để hai nơi không nói khác nhau.
+                request.setAttribute("stays", BookingDAO.groupStaysByPet(
+                        BookingDAO.findCurrentStaysByOwner(conn, user.getId())));
                 request.setAttribute("upcoming",
                         BookingDAO.findUpcomingAppointments(conn, user.getId(), MAX_UPCOMING));
                 request.setAttribute("recentBookings",
@@ -60,7 +67,8 @@ public class HomeController extends HttpServlet {
                         "Không tải được bảng tin trang chủ cho userId=" + user.getId(), e);
             }
         }
-        request.getRequestDispatcher("/home.jsp").forward(request, response);
+        request.setAttribute("fromHomeController", Boolean.TRUE);
+        request.getRequestDispatcher("/index.jsp").forward(request, response);
     }
 
     @Override
