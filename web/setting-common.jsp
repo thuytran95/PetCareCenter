@@ -45,6 +45,9 @@
             + (passwordActive ? " profile-menu__item--active" : "");
 %>
 <div>
+    <a href="${pageContext.request.contextPath}/" class="btn btn-back mb-3">
+        <i class="fa-solid fa-arrow-left"></i> Quay lại
+    </a>
     <div class="profile-header">Cài đặt thông tin</div>
     <div class="d-flex profile-menu flex-column align-items-start">
         <a class="<%= profileMenuClass %>"

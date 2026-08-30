@@ -32,11 +32,6 @@
                     <body>
  
                         <div class="container py-5">
-                            <div>
-                                <button class="btn btn-back" onclick="history.back()">
-                                    <i class="fa-solid fa-arrow-left"></i> Quay lại
-                                </button>
-                            </div>
                             <div class="row">
                                 <div class="col-12 col-sm-4">
                                     <jsp:include page="setting-common.jsp" />

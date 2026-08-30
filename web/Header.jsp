@@ -64,8 +64,13 @@
                                                 </a>
                                             </div>
                                             <div class="header-icon">
+                                                <c:set var="logoutReturn" value="${pageContext.request.servletPath}" />
+                                                <c:if test="${not empty pageContext.request.queryString}">
+                                                    <c:set var="logoutReturn" value="${logoutReturn}?${pageContext.request.queryString}" />
+                                                </c:if>
                                                 <form action="${pageContext.request.contextPath}/logout" method="post"
                                                     style="display:inline;">
+                                                    <input type="hidden" name="redirect" value="${logoutReturn}" />
                                                     <button type="submit"
                                                         class="circle border border-0 text-white p-0 bg-primary-blue d-flex justify-content-center align-items-center">
                                                         <i class="fa-solid fa-power-off"></i>

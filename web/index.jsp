@@ -1,13 +1,14 @@
-<%-- Document : index Created on : Sep 6, 2025, 10:03:17 AM Author : Admin --%>
+﻿<%-- Document : index Created on : Sep 6, 2025, 10:03:17 AM Author : Admin --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
-<%@page import="java.util.List, java.util.Base64, com.petweb.model.Pet, com.petweb.model.Appointment, com.petweb.model.Booking, com.petweb.model.HealthRecord, com.petweb.model.PetStay, java.util.Map" %>
+<%@page import="com.petweb.utils.MyUtils" %>
 <%
-    // Truy cập trực tiếp /index.jsp → chuyển sang servlet gốc để nạp dữ liệu
+    // Truy cập trực tiếp /index.jsp hoặc welcome file → forward sang servlet gốc
     if (!Boolean.TRUE.equals(request.getAttribute("fromHomeController"))) {
-        response.sendRedirect(request.getContextPath() + "/");
+        request.getRequestDispatcher("/").forward(request, response);
         return;
     }
+    boolean homeLoggedIn = MyUtils.getLoginedUser(session) != null;
 %>
 <!DOCTYPE html>
 <html>
@@ -27,7 +28,8 @@
     <link rel="stylesheet" href="css/health.css">
 </head>
 
-<body>
+<body data-context-path="${pageContext.request.contextPath}"
+      data-home-logged-in="<%= homeLoggedIn %>">
     <jsp:include page="Header.jsp"></jsp:include>
     <section class="banner">
         <span class="banner-blob banner-blob--1" aria-hidden="true"></span>
@@ -197,309 +199,13 @@
         </div>
     </section>
 
-    <%-- Khối chỉ hiện với khách đã đăng nhập; danh sách do HomeController nạp sẵn --%>
-    <% List<Pet> myPets = (List<Pet>) request.getAttribute("myPets");
-       Map<Integer, List<PetStay>> homeStays = (Map<Integer, List<PetStay>>) request.getAttribute("stays");
-       if (myPets != null) {
-           String[] homePetColors = {"blue", "pink", "amber", "teal"}; %>
-    <section class="my-pets">
-        <div class="container">
-            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
-                <div>
-                    <h2 class="h4 fw-bold mb-1">Thú cưng của bạn</h2>
-                    <p class="mb-0" style="color:var(--text-body);font-size:14.5px;">
-                        Chọn một bé để đặt lịch chăm sóc ngay
-                    </p>
-                </div>
-                <a class="btn btn-outline-blue fw-semibold px-3 py-2"
-                   href="<%=request.getContextPath()%>/petProfile">Quản lý hồ sơ</a>
-            </div>
+    <%-- Bảng tin thành viên: nội dung nạp qua /api/homeDashboard --%>
+    <div id="home-member-area"<% if (!homeLoggedIn) { %> hidden<% } %>>
+        <div id="home-pets-mount"></div>
+        <div id="home-health-mount"></div>
+        <div id="home-appt-mount"></div>
+    </div>
 
-            <% if (myPets.isEmpty()) { %>
-            <a class="pet-add-card mx-auto" style="max-width:360px;"
-               href="<%=request.getContextPath()%>/addPet">
-                <i class="fa-solid fa-paw fa-2x"></i>
-                <span class="fw-semibold">Chưa có thú cưng nào, hãy thêm bé đầu tiên!</span>
-            </a>
-            <% } else { %>
-            <%-- Danh sách trượt ngang: nhiều bé thì bấm mũi tên thay vì tràn xuống dòng --%>
-            <div class="pet-slider" data-pet-slider>
-                <button class="pet-slider-nav pet-slider-nav--prev" type="button"
-                        data-pet-prev aria-label="Xem các bé trước đó">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
-
-                <div class="pet-track" data-pet-track>
-                <% int hIdx = 0;
-                   for (Pet hp : myPets) {
-                       String hc = homePetColors[hIdx % homePetColors.length];
-                       hIdx++;
-                       List<PetStay> hPetStays = (homeStays == null) ? null : homeStays.get(hp.getPetId());
-                       PetStay hStay = (hPetStays == null || hPetStays.isEmpty()) ? null : hPetStays.get(0);
-                       int hMoreStays = (hPetStays == null) ? 0 : hPetStays.size() - 1; %>
-                <div class="pet-slide">
-                    <div class="pet-card d-flex flex-column gap-3">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="pet-avatar bg-<%= hc %>-tint text-<%= hc %>">
-                                <% if (hp.getPhoto() != null) { %>
-                                <img src="data:image/png;base64,<%= Base64.getEncoder().encodeToString(hp.getPhoto()) %>"
-                                     alt="<%= hp.getName() %>" />
-                                <% } else { %>
-                                <i class="fa-solid fa-paw"></i>
-                                <% } %>
-                            </div>
-                            <div>
-                                <div class="fw-bold"><%= hp.getName() %></div>
-                                <div style="color:var(--text-body);font-size:12.5px;">
-                                    <%= hp.getSpecies() == null ? "" : hp.getSpecies() %>
-                                </div>
-                            </div>
-                        </div>
-                        <%-- Tình trạng lưu trú, cùng dữ liệu với trang hồ sơ.
-                             Bé chưa đặt phòng vẫn có khối cùng chiều cao để các thẻ
-                             trong dải trượt không cao thấp lệch nhau. --%>
-                        <% if (hStay == null) { %>
-                        <div class="pet-stay pet-stay--none">
-                            <div class="pet-stay-top">
-                                <span class="pet-stay-dot pet-stay-dot--none">
-                                    <i class="fa-regular fa-moon"></i>
-                                </span>
-                                <div class="flex-grow-1">
-                                    <div class="pet-stay-state">Chưa đặt phòng</div>
-                                    <div class="pet-stay-room">Bé đang ở nhà cùng bạn</div>
-                                </div>
-                            </div>
-                            <div class="pet-stay-actions">
-                                <a class="pet-stay-link"
-                                   href="<%=request.getContextPath()%>/BookingServlet?petId=<%= hp.getPetId() %>&amp;serviceType=hotel">
-                                    Đặt phòng cho bé
-                                </a>
-                            </div>
-                        </div>
-                        <% } else { %>
-                        <div class="pet-stay pet-stay--<%= hStay.getStateColor() %>">
-                            <div class="pet-stay-top">
-                                <span class="pet-stay-dot bg-<%= hStay.getStateColor() %>-tint text-<%= hStay.getStateColor() %>">
-                                    <i class="fa-solid fa-door-open"></i>
-                                </span>
-                                <div class="flex-grow-1">
-                                    <div class="pet-stay-state"><%= hStay.getStateText() %></div>
-                                    <div class="pet-stay-room">
-                                        <%= hStay.getRoomName() %> · <%= hStay.getFormattedRange() %>
-                                    </div>
-                                    <% if (hMoreStays > 0) { %>
-                                    <a class="pet-stay-more"
-                                       href="<%=request.getContextPath()%>/myBookings?service=hotel&amp;petId=<%= hp.getPetId() %>">
-                                        +<%= hMoreStays %> đợt đã đặt nữa
-                                    </a>
-                                    <% } %>
-                                </div>
-                            </div>
-                            <div class="pet-stay-actions">
-                                <a class="pet-stay-link"
-                                   href="<%=request.getContextPath()%>/invoice?bookingId=<%= hStay.getBookingId() %>">
-                                    Đơn #<%= hStay.getBookingId() %>
-                                </a>
-                                <% if (hStay.isCheckOutable()) { %>
-                                <form action="<%=request.getContextPath()%>/bookingAction" method="post"
-                                      class="d-inline">
-                                    <input type="hidden" name="action" value="checkout">
-                                    <input type="hidden" name="bookingId" value="<%= hStay.getBookingId() %>">
-                                    <input type="hidden" name="back" value="index">
-                                    <button type="submit" class="pet-stay-btn">
-                                        <i class="fa-solid fa-right-from-bracket"></i> Trả phòng
-                                    </button>
-                                </form>
-                                <% } else if (hStay.isCancellable()) { %>
-                                <form action="<%=request.getContextPath()%>/bookingAction" method="post"
-                                      class="d-inline js-cancel-stay"
-                                      data-booking="<%= hStay.getBookingId() %>">
-                                    <input type="hidden" name="action" value="cancel">
-                                    <input type="hidden" name="bookingId" value="<%= hStay.getBookingId() %>">
-                                    <input type="hidden" name="back" value="index">
-                                    <button type="submit" class="pet-stay-btn pet-stay-btn--warn">
-                                        <i class="fa-solid fa-xmark"></i> Hủy phòng
-                                    </button>
-                                </form>
-                                <% } else if (hStay.isDraft()) { %>
-                                <a class="pet-stay-btn"
-                                   href="<%=request.getContextPath()%>/chooseService">
-                                    <i class="fa-solid fa-arrow-right"></i> Hoàn tất đơn
-                                </a>
-                                <% } %>
-                            </div>
-                        </div>
-                        <% } %>
-
-                        <div class="pet-menu mt-auto">
-                            <a class="pet-menu-item"
-                               href="<%=request.getContextPath()%>/BookingServlet?petId=<%= hp.getPetId() %>">
-                                <span class="pet-menu-icon bg-<%= hc %>-tint text-<%= hc %>">
-                                    <i class="fa-regular fa-calendar-plus"></i>
-                                </span>
-                                <span class="flex-grow-1">
-                                    <span class="pet-menu-title">Đặt lịch cho bé</span>
-                                </span>
-                                <i class="fa-solid fa-chevron-right pet-menu-go"></i>
-                            </a>
-                            <a class="pet-menu-item"
-                               href="<%=request.getContextPath()%>/petHealth?petId=<%= hp.getPetId() %>">
-                                <span class="pet-menu-icon bg-amber-tint text-amber">
-                                    <i class="fa-solid fa-syringe"></i>
-                                </span>
-                                <span class="flex-grow-1">
-                                    <span class="pet-menu-title">Khám định kỳ &amp; sổ tiêm</span>
-                                </span>
-                                <i class="fa-solid fa-chevron-right pet-menu-go"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <% } %>
-                </div>
-
-                <button class="pet-slider-nav pet-slider-nav--next" type="button"
-                        data-pet-next aria-label="Xem các bé tiếp theo">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
-            </div>
-            <% } %>
-        </div>
-    </section>
-    <% } %>
-
-    <%-- Nhắc tiêm phòng / khám định kỳ sắp tới hạn --%>
-    <% List<HealthRecord> healthDue = (List<HealthRecord>) request.getAttribute("healthDue");
-       if (healthDue != null && !healthDue.isEmpty()) { %>
-    <section class="dashboard pb-0">
-        <div class="container">
-            <h2 class="h5 fw-bold mb-3">
-                <i class="fa-solid fa-syringe me-2" style="color:var(--amber);"></i>Nhắc tiêm phòng &amp; khám định kỳ
-            </h2>
-            <div class="row g-3">
-                <% for (HealthRecord hr : healthDue) { %>
-                <div class="col-12 col-md-6">
-                    <div class="hl-due <%= hr.isOverdue() ? "hl-due--late" : "" %>">
-                        <div class="hl-icon bg-<%= hr.getColorName() %>-tint text-<%= hr.getColorName() %>">
-                            <i class="fa-solid <%= hr.getIconClass() %>"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <div class="fw-bold"><%= hr.getItemName() %></div>
-                            <div class="hl-meta">
-                                <i class="fa-solid fa-paw"></i> <%= hr.getPetName() %>
-                                · Hạn: <%= hr.getFormattedNextDueAt() %>
-                            </div>
-                            <a class="dash-link"
-                               href="<%=request.getContextPath()%>/petHealth?petId=<%= hr.getPetId() %>">
-                                Xem sổ sức khỏe
-                            </a>
-                        </div>
-                        <span class="hl-badge <%= hr.isOverdue() ? "hl-badge--late" : "" %>">
-                            <%= hr.getDueText() %>
-                        </span>
-                    </div>
-                </div>
-                <% } %>
-            </div>
-        </div>
-    </section>
-    <% } %>
-
-    <%-- Lịch hẹn sắp tới & hóa đơn gần đây: chỉ hiện với khách đã đăng nhập --%>
-    <% List<Appointment> upcoming = (List<Appointment>) request.getAttribute("upcoming");
-       List<Booking> recentBookings = (List<Booking>) request.getAttribute("recentBookings");
-       if (upcoming != null || recentBookings != null) { %>
-    <section class="dashboard">
-        <div class="container">
-            <div class="row g-4">
-
-                <div class="col-12 col-lg-7">
-                    <h2 class="h5 fw-bold mb-3">
-                        <i class="fa-regular fa-calendar-check me-2 text-primary-blue"></i>Lịch hẹn sắp tới
-                    </h2>
-
-                    <% if (upcoming == null || upcoming.isEmpty()) { %>
-                    <div class="dash-empty">
-                        <i class="fa-regular fa-calendar"></i>
-                        <span>Chưa có lịch hẹn nào sắp tới</span>
-                    </div>
-                    <% } else {
-                           for (Appointment ap : upcoming) { %>
-                    <div class="dash-appt <%= ap.isUrgent() ? "dash-appt--urgent" : "" %>">
-                        <div class="dash-appt-icon bg-<%= ap.getColorName() %>-tint text-<%= ap.getColorName() %>">
-                            <i class="fa-solid <%= ap.getIconClass() %>"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <span class="fw-bold"><%= ap.getServiceLabel() %></span>
-                                <span class="dash-pet">
-                                    <i class="fa-solid fa-paw"></i> <%= ap.getPetName() %>
-                                </span>
-                            </div>
-                            <div class="dash-appt-time">
-                                <%= ap.getFormattedStartAt() %>
-                                <% if (ap.getRoomLabel() != null && !ap.getRoomLabel().isBlank()) { %>
-                                    · <%= ap.getRoomLabel() %>
-                                <% } %>
-                            </div>
-                        </div>
-                        <div class="text-end">
-                            <div class="dash-badge <%= ap.isUrgent() ? "dash-badge--urgent" : "" %>">
-                                <%= ap.getReminderText() %>
-                            </div>
-                            <a class="dash-link" href="<%=request.getContextPath()%>/invoice?bookingId=<%= ap.getBookingId() %>">
-                                Xem hóa đơn
-                            </a>
-                        </div>
-                    </div>
-                    <%     }
-                       } %>
-                </div>
-
-                <div class="col-12 col-lg-5">
-                    <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
-                        <h2 class="h5 fw-bold mb-0">
-                            <i class="fa-solid fa-receipt me-2" style="color:var(--amber);"></i>Hóa đơn gần đây
-                        </h2>
-                        <%-- Chỗ này chỉ hiện vài đơn mới nhất, nên phải có lối sang xem đủ --%>
-                        <a class="dash-link" href="<%=request.getContextPath()%>/myBookings">
-                            Xem tất cả <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-                    </div>
-
-                    <% if (recentBookings == null || recentBookings.isEmpty()) { %>
-                    <div class="dash-empty">
-                        <i class="fa-solid fa-receipt"></i>
-                        <span>Chưa có hóa đơn nào</span>
-                    </div>
-                    <% } else {
-                           for (Booking bk : recentBookings) { %>
-                    <a class="dash-invoice" href="<%=request.getContextPath()%>/invoice?bookingId=<%= bk.getBookingId() %>">
-                        <div class="d-flex justify-content-between align-items-start gap-2">
-                            <div>
-                                <div class="fw-bold">Đơn #<%= bk.getBookingId() %></div>
-                                <div class="dash-appt-time">
-                                    <%= bk.getPetName() %> · <%= bk.getFormattedCreatedAt() %>
-                                </div>
-                            </div>
-                            <div class="text-end">
-                                <div class="dash-amount">
-                                    <%= bk.getTotalPrice() == null ? "0" : String.format("%,.0f", bk.getTotalPrice()) %> đ
-                                </div>
-                                <span class="dash-status dash-status--<%= bk.getStatus().toLowerCase() %>">
-                                    <%= bk.getStatus() %>
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-                    <%     }
-                       } %>
-                </div>
-
-            </div>
-        </div>
-    </section>
-    <% } %>
     <section class="service" id="dich-vu">
         <div class="container">
             <div class="row">
@@ -577,9 +283,8 @@
         </div>
     </section>
 
-    <%-- Tra cứu hóa đơn nhanh: chỉ hiện với khách chưa đăng nhập.
-         myPets chỉ khác null khi HomeController nạp dữ liệu cho khách đã đăng nhập. --%>
-    <% if (myPets == null) { %>
+    <%-- Tra cứu hóa đơn nhanh: hiện với khách chưa đăng nhập (ẩn/hiện bằng JS sau khi gọi API) --%>
+    <div id="home-guest-area"<% if (homeLoggedIn) { %> hidden<% } %>>
     <section class="guest-lookup">
         <div class="container">
             <div class="gl-card">
@@ -615,7 +320,7 @@
             </div>
         </div>
     </section>
-    <% } %>
+    </div>
 
     <section id="team">
         <div class="container">
@@ -810,6 +515,7 @@
     <jsp:include page="Footer.jsp"></jsp:include>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>
+    <script src="js/home-dashboard.js"></script>
     <script src="js/pet-slider.js"></script>
     <script src="js/stay-actions.js"></script>
     <script src="js/contact-bubble.js"></script>
