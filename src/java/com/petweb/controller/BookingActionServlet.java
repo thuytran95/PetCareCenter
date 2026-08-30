@@ -65,6 +65,16 @@ public class BookingActionServlet extends HttpServlet {
                 BookingService.cancel(conn, bookingId);
                 request.getSession().setAttribute("message",
                         "Đã hủy đơn #" + bookingId + ".");
+            } else if ("delete".equals(action)) {
+                UserAccount owner = MyUtils.getLoginedUser(request.getSession());
+                if (owner == null) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                            "Cần đăng nhập để xóa đơn");
+                    return;
+                }
+                BookingService.deleteFinished(conn, bookingId, owner.getId());
+                request.getSession().setAttribute("message",
+                        "Đã xóa đơn #" + bookingId + " khỏi lịch sử.");
             } else if ("checkout".equals(action)) {
                 BookingService.checkOut(conn, bookingId);
                 request.getSession().setAttribute("message",
@@ -84,6 +94,10 @@ public class BookingActionServlet extends HttpServlet {
         // Bấm từ hồ sơ thú cưng hay trang chủ thì quay lại đúng chỗ đó,
         // không quăng khách sang trang hóa đơn.
         String back = request.getParameter("back");
+        // Đơn vừa bị xóa thì không còn hóa đơn nào để quay về
+        if ("delete".equals(action) && back == null) {
+            back = "myBookings";
+        }
         if ("petProfile".equals(back)) {
             response.sendRedirect(request.getContextPath() + "/petProfile");
         } else if ("home".equals(back) || "index".equals(back)) {

@@ -605,3 +605,19 @@ a.pet-stay-btn {
 }
 
 .pet-stay-more:hover { color: var(--primary-blue); opacity: .8; }
+
+/* Số đơn của bé, hiện ngay trên mục danh mục */
+.pet-menu-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--teal-tint);
+  color: var(--teal);
+  font-size: 11.5px;
+  font-weight: 700;
+  flex: none;
+}

@@ -1,6 +1,7 @@
 package com.petweb.controller;
 
-import com.petweb.dao.PetDAO;
+import com.petweb.service.BookingException;
+import com.petweb.service.PetService;
 import com.petweb.model.UserAccount;
 import com.petweb.utils.MyUtils;
 
@@ -19,8 +20,8 @@ import java.util.logging.Logger;
 /**
  * Xóa thú cưng.
  *
- * Dùng PetDAO.deleteOwned nên câu lệnh xóa luôn kèm điều kiện user_id: người dùng
- * không xóa được thú cưng của người khác bằng cách đổi số trên URL.
+ * Quy tắc (kiểm tra quyền sở hữu và chặn bé còn đơn đang hiệu lực) nằm ở PetService;
+ * servlet chỉ đọc tham số và hiển thị kết quả.
  * Tham số vẫn giữ tên "petid" (chữ thường) cho khớp các link sẵn có trong JSP.
  */
 @WebServlet("/deletePet")
@@ -50,13 +51,16 @@ public class DeletesPetServlet extends HttpServlet {
 
         Connection conn = BookingServlet.requireConnection(request);
         try {
-            int rows = PetDAO.deleteOwned(conn, petId, user.getId());
+            int rows = PetService.deleteOwned(conn, petId, user.getId());
             if (rows > 0) {
                 request.getSession().setAttribute("message", "Đã xóa thú cưng.");
             } else {
                 request.getSession().setAttribute("error",
                         "Không tìm thấy thú cưng này trong hồ sơ của bạn.");
             }
+        } catch (BookingException e) {
+            // Bé còn đơn đang hiệu lực: đây là từ chối có chủ ý, không phải sự cố
+            request.getSession().setAttribute("error", e.getMessage());
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Lỗi khi xóa thú cưng petId=" + petId, e);
             request.getSession().setAttribute("error",

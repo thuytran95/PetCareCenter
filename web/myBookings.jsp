@@ -226,6 +226,19 @@
                         </button>
                     </form>
                     <% } %>
+                    <%-- Chỉ đơn đã kết thúc mới xóa được. Đơn còn hiệu lực mà xóa thì
+                         phòng bị khóa vô ích và không còn chỗ nào để trả phòng. --%>
+                    <% if (b.isCompleted() || b.isCancelled()) { %>
+                    <form action="<%=request.getContextPath()%>/bookingAction" method="post"
+                          class="d-inline js-delete-order" data-booking="<%= b.getBookingId() %>">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="bookingId" value="<%= b.getBookingId() %>">
+                        <input type="hidden" name="back" value="myBookings">
+                        <button type="submit" class="ord-del" title="Xóa đơn khỏi lịch sử">
+                            <i class="fa-solid fa-trash"></i> Xóa đơn
+                        </button>
+                    </form>
+                    <% } %>
                 </div>
             </div>
             <% } %>
