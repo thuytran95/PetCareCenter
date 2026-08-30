@@ -8,7 +8,12 @@
     boolean windowKnown = rooms != null && !rooms.isEmpty() && rooms.get(0).isWindowKnown();
     String prevCheckIn = (String) request.getAttribute("checkIn");
     String prevCheckOut = (String) request.getAttribute("checkOut");
-    String minDateTime = LocalDateTime.now().withSecond(0).withNano(0).toString().substring(0, 16);
+    LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
+    String minDateTime = now.toString().substring(0, 16);
+    String defaultCheckIn = minDateTime;
+    String defaultCheckOut = now.plusHours(2).toString().substring(0, 16);
+    String checkInValue = prevCheckIn != null && !prevCheckIn.isBlank() ? prevCheckIn : defaultCheckIn;
+    String checkOutValue = prevCheckOut != null && !prevCheckOut.isBlank() ? prevCheckOut : defaultCheckOut;
     String error = (String) request.getAttribute("error");
 %>
 <!DOCTYPE html>
@@ -54,13 +59,13 @@
                             <label class="rm-label" for="checkIn">Ngày nhận phòng</label>
                             <input type="datetime-local" id="checkIn" name="checkIn" class="form-control"
                                    required min="<%= minDateTime %>"
-                                   value="<%= prevCheckIn == null ? "" : prevCheckIn %>">
+                                   value="<%= checkInValue %>">
                         </div>
                         <div class="col-12 col-sm-6">
                             <label class="rm-label" for="checkOut">Ngày trả phòng</label>
                             <input type="datetime-local" id="checkOut" name="checkOut" class="form-control"
-                                   required min="<%= minDateTime %>"
-                                   value="<%= prevCheckOut == null ? "" : prevCheckOut %>">
+                                   required min="<%= defaultCheckOut %>"
+                                   value="<%= checkOutValue %>">
                         </div>
                     </div>
 

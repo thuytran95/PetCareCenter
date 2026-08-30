@@ -14,6 +14,17 @@
     "use strict";
 
     var DEBOUNCE_MS = 350;
+    var MIN_STAY_MS = 2 * 60 * 60 * 1000;
+
+    function toLocalInputValue(date) {
+        var pad = function (n) { return n < 10 ? "0" + n : "" + n; };
+        return date.getFullYear() + "-" + pad(date.getMonth() + 1) + "-" + pad(date.getDate())
+            + "T" + pad(date.getHours()) + ":" + pad(date.getMinutes());
+    }
+
+    function stayTooShort(start, end) {
+        return !start || !end || isNaN(start) || isNaN(end) || end - start < MIN_STAY_MS;
+    }
 
     function setup(form) {
         var url = form.getAttribute("data-availability-url");
@@ -74,14 +85,29 @@
             }
         }
 
+        function syncCheckOut() {
+            if (!checkIn.value) return;
+            var start = new Date(checkIn.value);
+            if (isNaN(start)) return;
+
+            var minOut = new Date(start.getTime() + MIN_STAY_MS);
+            checkOut.min = toLocalInputValue(minOut);
+
+            var current = checkOut.value ? new Date(checkOut.value) : null;
+            if (!current || isNaN(current) || stayTooShort(start, current)) {
+                checkOut.value = toLocalInputValue(minOut);
+            }
+        }
+
         function refresh() {
             var a = checkIn.value, b = checkOut.value;
             if (!a || !b) {
                 setHint("Chọn ngày nhận và trả phòng để xem còn bao nhiêu phòng trống.", false);
                 return;
             }
-            if (b <= a) {
-                setError("Ngày trả phòng phải sau ngày nhận phòng.");
+            var start = new Date(a), end = new Date(b);
+            if (stayTooShort(start, end)) {
+                setError("Thời gian lưu trú tối thiểu là 2 giờ. Vui lòng chọn lại ngày trả phòng.");
                 return;
             }
 
@@ -112,11 +138,27 @@
             timer = setTimeout(refresh, DEBOUNCE_MS);
         }
 
-        checkIn.addEventListener("change", schedule);
+        function onCheckInChange() {
+            syncCheckOut();
+            schedule();
+        }
+
+        checkIn.addEventListener("change", onCheckInChange);
         checkOut.addEventListener("change", schedule);
-        checkIn.addEventListener("input", schedule);
+        checkIn.addEventListener("input", onCheckInChange);
         checkOut.addEventListener("input", schedule);
 
+        form.addEventListener("submit", function (e) {
+            var start = new Date(checkIn.value);
+            var end = new Date(checkOut.value);
+            if (stayTooShort(start, end)) {
+                e.preventDefault();
+                setError("Thời gian lưu trú tối thiểu là 2 giờ. Vui lòng chọn lại ngày trả phòng.");
+                checkOut.focus();
+            }
+        });
+
+        syncCheckOut();
         // Ngày có sẵn (quay lại form sau khi bị báo lỗi) thì kiểm tra luôn
         if (checkIn.value && checkOut.value) refresh();
     }

@@ -11,10 +11,9 @@
     <body>
         <div class="container py-5">
             <div>
-                <span class="text-body">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </span>
-                <button class="text-body btn" onclick="history.back()">Quay lại</button>
+                <button class="btn btn-back" onclick="history.back()">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </button>
             </div>
             <div class="row">
                 <div class="col-12 col-sm-4">
@@ -23,15 +22,6 @@
                 <div class="col-12 col-sm-8">
                     <form id="changePassword" method="post" action="changePassword" class="mb-5 needs-validation"
                         novalidate>
-                        <div class="d-flex align-items-end gap-3 mb-5">
-                            <div class="user-avatar">
-                                <i class="fa-solid fa-paw mx-auto"></i>
-                            </div>
-                            <button type="button" class="w-fit h-fit btn-change-avatar">
-                                Thay đổi hình ảnh
-                            </button>
-                        </div>
-
                         <div class="d-flex flex-column gap-4 mb-5">
                             <div class="form-container has-validation">
                                 <label>Mật khẩu hiện tại</label>

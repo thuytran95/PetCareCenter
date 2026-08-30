@@ -1,4 +1,5 @@
 <%@page import="com.petweb.model.UserAccount" %>
+<%@page import="java.util.Base64" %>
     <%@page import="com.petweb.utils.DBUtils" %>
         <%@page import="com.petweb.utils.ConnectionUtils" %>
             <%@ page import="java.sql.Connection" %>
@@ -38,9 +39,17 @@
                                         <c:if test="${user!= null}">
                                             <div class="d-flex align-items-stretch gap-2 header-account">
                                                 <span
-                                                    class="circle circle-primary-blue d-flex justify-content-center align-items-center"
+                                                    class="circle circle-primary-blue d-flex justify-content-center align-items-center overflow-hidden"
                                                     title="${user.fullName}">
-                                                    <i class="fa-regular fa-user"></i>
+                                                    <c:choose>
+                                                        <c:when test="${user.avatar != null}">
+                                                            <img src="data:image/png;base64,<%= Base64.getEncoder().encodeToString(((UserAccount) pageContext.findAttribute("user")).getAvatar()) %>"
+                                                                alt="" style="width: 100%; height: 100%; object-fit: cover;" />
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <i class="fa-regular fa-user"></i>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </span>
                                                 <span>${user.userName}</span>
                                                 <a class="link-underline link-underline-opacity-0 text-primary-blue"

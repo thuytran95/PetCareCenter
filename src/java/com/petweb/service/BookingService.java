@@ -95,6 +95,10 @@ public class BookingService {
         if (!checkOut.after(checkIn)) {
             throw new BookingException("Ngày trả phòng phải sau ngày nhận phòng.");
         }
+        long stayMs = checkOut.getTime() - checkIn.getTime();
+        if (stayMs < 2L * 60 * 60 * 1000) {
+            throw new BookingException("Thời gian lưu trú tối thiểu là 2 giờ.");
+        }
 
         RoomType room = ServiceCatalogDAO.findRoomType(conn, roomCode);
         if (room == null || !room.isActive()) {
