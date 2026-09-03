@@ -200,6 +200,9 @@
                         <input type="hidden" name="action" value="pay">
                         <input type="hidden" name="bookingId" value="<%= b.getBookingId() %>">
                         <input type="hidden" name="back" value="myBookings">
+                        <% if (pet != null) { %>
+                        <input type="hidden" name="backPetId" value="<%= pet.getPetId() %>">
+                        <% } %>
                         <button type="submit" class="btn btn-sm btn-primary-blue fw-semibold">
                             <i class="fa-solid fa-credit-card me-1"></i> Thanh toán
                         </button>
@@ -210,6 +213,9 @@
                         <input type="hidden" name="action" value="checkout">
                         <input type="hidden" name="bookingId" value="<%= b.getBookingId() %>">
                         <input type="hidden" name="back" value="myBookings">
+                        <% if (pet != null) { %>
+                        <input type="hidden" name="backPetId" value="<%= pet.getPetId() %>">
+                        <% } %>
                         <button type="submit" class="pet-stay-btn">
                             <i class="fa-solid fa-right-from-bracket"></i> Trả phòng
                         </button>
@@ -221,8 +227,27 @@
                         <input type="hidden" name="action" value="cancel">
                         <input type="hidden" name="bookingId" value="<%= b.getBookingId() %>">
                         <input type="hidden" name="back" value="myBookings">
+                        <% if (pet != null) { %>
+                        <input type="hidden" name="backPetId" value="<%= pet.getPetId() %>">
+                        <% } %>
                         <button type="submit" class="pet-stay-btn pet-stay-btn--warn">
                             <i class="fa-solid fa-xmark"></i> Hủy đơn
+                        </button>
+                    </form>
+                    <% } %>
+                    <%-- Chỉ đơn đã kết thúc mới xóa được. Đơn còn hiệu lực mà xóa thì
+                         phòng bị khóa vô ích và không còn chỗ nào để trả phòng. --%>
+                    <% if (b.isCompleted() || b.isCancelled()) { %>
+                    <form action="<%=request.getContextPath()%>/bookingAction" method="post"
+                          class="d-inline js-delete-order" data-booking="<%= b.getBookingId() %>">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="bookingId" value="<%= b.getBookingId() %>">
+                        <input type="hidden" name="back" value="myBookings">
+                        <% if (pet != null) { %>
+                        <input type="hidden" name="backPetId" value="<%= pet.getPetId() %>">
+                        <% } %>
+                        <button type="submit" class="ord-del" title="Xóa đơn khỏi lịch sử">
+                            <i class="fa-solid fa-trash"></i> Xóa đơn
                         </button>
                     </form>
                     <% } %>

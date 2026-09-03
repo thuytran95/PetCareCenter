@@ -16,16 +16,41 @@ public class JDBCFilter implements Filter {
 
     // Xác định request có trỏ vào 1 servlet hay không
     private boolean needJDBC(HttpServletRequest request) {
-        String servletPath = request.getServletPath();
-        String pathInfo    = request.getPathInfo();
-        String urlPattern  = (pathInfo == null) ? servletPath : (servletPath + "/*");
-
         Map<String, ? extends ServletRegistration> servletRegistrations =
                 request.getServletContext().getServletRegistrations();
 
-        Collection<? extends ServletRegistration> values = servletRegistrations.values();
-        for (ServletRegistration sr : values) {
-            if (sr.getMappings().contains(urlPattern)) return true;
+        for (ServletRegistration sr : servletRegistrations.values()) {
+            if (matchesMapping(request.getServletPath(), request.getPathInfo(), sr.getMappings())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Request này có khớp với một trong các ánh xạ của servlet không.
+     *
+     * Tách riêng và để công khai để kiểm thử được mà không cần dựng cả Tomcat.
+     *
+     * Điểm dễ sai: yêu cầu vào GỐC ứng dụng (http://host/petcare/) được đặc tả
+     * Servlet quy định là servletPath rỗng và pathInfo bằng "/". Nếu chỉ ghép
+     * servletPath + "/*" như cách cũ thì ra "/*", không khớp ánh xạ chuỗi rỗng
+     * của trang chủ, và cả request đó chạy mà KHÔNG có kết nối CSDL. Servlet nào
+     * ánh xạ vào gốc mà cần đọc dữ liệu sẽ âm thầm trả về trang trống — không
+     * lỗi, không ngoại lệ, nên rất khó lần ra.
+     */
+    public static boolean matchesMapping(String servletPath, String pathInfo,
+                                         Collection<String> mappings) {
+        if (mappings == null || mappings.isEmpty()) return false;
+
+        String path = (servletPath == null) ? "" : servletPath;
+
+        if (mappings.contains(path)) return true;
+        if (pathInfo != null && mappings.contains(path + "/*")) return true;
+
+        // Gốc ứng dụng: khai báo bằng chuỗi rỗng, một số máy chủ báo cáo là "/"
+        if (path.isEmpty()) {
+            return mappings.contains("") || mappings.contains("/");
         }
         return false;
     }

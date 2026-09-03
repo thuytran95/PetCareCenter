@@ -9,6 +9,9 @@
     // JDBCFilter chỉ cấp Connection cho URL trỏ tới servlet).
     List<Pet> pets = (List<Pet>) request.getAttribute("pets");
     Map<Integer, List<PetStay>> stays = (Map<Integer, List<PetStay>>) request.getAttribute("stays");
+    Map<Integer, Integer> activeOrders = (Map<Integer, Integer>) request.getAttribute("activeOrders");
+    Map<Integer, Integer> healthCounts = (Map<Integer, Integer>) request.getAttribute("healthCounts");
+    Map<Integer, Integer> orderCounts = (Map<Integer, Integer>) request.getAttribute("orderCounts");
     String loadError = (String) request.getAttribute("loadError");
 
     String flashMessage = (String) session.getAttribute("message");
@@ -86,6 +89,12 @@
                         List<PetStay> petStays = (stays == null) ? null : stays.get(p.getPetId());
                         PetStay stay = (petStays == null || petStays.isEmpty()) ? null : petStays.get(0);
                         int moreStays = (petStays == null) ? 0 : petStays.size() - 1;
+                        int openOrders = (activeOrders == null || activeOrders.get(p.getPetId()) == null)
+                                ? 0 : activeOrders.get(p.getPetId());
+                        int healthRows = (healthCounts == null || healthCounts.get(p.getPetId()) == null)
+                                ? 0 : healthCounts.get(p.getPetId());
+                        int orderRows = (orderCounts == null || orderCounts.get(p.getPetId()) == null)
+                                ? 0 : orderCounts.get(p.getPetId());
                 %>
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="pet-card d-flex flex-column gap-3">
@@ -205,12 +214,44 @@
                                 </span>
                                 <i class="fa-solid fa-chevron-right pet-menu-go"></i>
                             </a>
+                            <%-- Toàn bộ đơn của riêng bé này, kể cả đơn đã xong và đã hủy --%>
+                            <a class="pet-menu-item"
+                               href="<%=request.getContextPath()%>/myBookings?petId=<%= p.getPetId()%>">
+                                <span class="pet-menu-icon bg-teal-tint text-teal">
+                                    <i class="fa-regular fa-rectangle-list"></i>
+                                </span>
+                                <span class="flex-grow-1">
+                                    <span class="pet-menu-title">Đơn của bé</span>
+                                    <span class="pet-menu-sub">
+                                        <% if (orderRows > 0) { %>
+                                        <%= orderRows %> đơn đã đặt
+                                        <% } else { %>
+                                        Chưa có đơn nào
+                                        <% } %>
+                                    </span>
+                                </span>
+                                <% if (orderRows > 0) { %>
+                                <span class="pet-menu-count"><%= orderRows %></span>
+                                <% } %>
+                                <i class="fa-solid fa-chevron-right pet-menu-go"></i>
+                            </a>
                         </div>
                         <div class="pet-actions d-flex gap-2">
                             <a class="btn btn-sm btn-outline-secondary flex-fill" title="Sửa hồ sơ"
                                href="<%=request.getContextPath()%>/editPet?petId=<%= p.getPetId()%>"><i class="fa-solid fa-pen me-1"></i> Sửa</a>
+                            <% if (openOrders > 0) { %>
+                            <%-- Còn đơn hiệu lực thì xóa sẽ làm đơn mất chủ và khóa phòng
+                                 vô ích, nên khóa nút luôn thay vì để bấm rồi mới báo lỗi --%>
+                            <span class="btn btn-sm btn-outline-secondary flex-fill disabled"
+                                  title="Bé đang có <%= openOrders %> đơn còn hiệu lực. Hãy trả phòng hoặc hủy đơn trước.">
+                                <i class="fa-solid fa-lock me-1"></i> Xóa
+                            </span>
+                            <% } else { %>
                             <a class="btn btn-sm btn-outline-secondary btn-delete-pet flex-fill" title="Xóa hồ sơ"
+                               data-pet-name="<%= p.getName() %>"
+                               data-health="<%= healthRows %>"
                                href="<%=request.getContextPath()%>/deletePet?petid=<%= p.getPetId()%>"><i class="fa-solid fa-trash me-1"></i> Xóa</a>
+                            <% } %>
                         </div>
                     </div>
                 </div>
@@ -235,7 +276,20 @@
         <script>
             document.querySelectorAll(".btn-delete-pet").forEach(function (el) {
                 el.addEventListener("click", function (e) {
-                    if (!confirm("Bạn chắc chắn muốn xóa thú cưng này?")) e.preventDefault();
+                    var name = el.getAttribute("data-pet-name") || "bé này";
+                    var health = parseInt(el.getAttribute("data-health") || "0", 10);
+                    // Sổ sức khỏe bị xóa theo và không khôi phục được, phải nói rõ
+                    var msg = "Xóa hồ sơ của " + name + "?";
+                    if (health > 0) {
+                        msg += "
+
+Toàn bộ " + health + " ghi chép trong sổ tiêm và khám"
+                             + " định kỳ sẽ bị xóa vĩnh viễn, không khôi phục được.";
+                    }
+                    msg += "
+
+Các hóa đơn cũ vẫn được giữ lại.";
+                    if (!confirm(msg)) e.preventDefault();
                 });
             });
         </script>

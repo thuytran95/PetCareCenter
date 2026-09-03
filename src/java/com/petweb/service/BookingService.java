@@ -397,6 +397,40 @@ public class BookingService {
         return false;
     }
 
+    /**
+     * Xóa hẳn một đơn đã kết thúc khỏi lịch sử của chủ tài khoản.
+     *
+     * Chỉ áp dụng cho đơn ĐÃ HOÀN TẤT hoặc ĐÃ HỦY — đơn còn hiệu lực mà xóa thì
+     * phòng sẽ bị khóa vô ích và không còn chỗ nào để trả phòng hay hủy.
+     *
+     * Đây là thao tác KHÔNG khôi phục được: hóa đơn và các dòng dịch vụ mất hẳn.
+     * Sổ sức khỏe của bé vẫn còn nguyên, chỉ mất đường dẫn về đơn.
+     *
+     * Không cho xóa đơn của khách vãng lai: đơn đó không thuộc tài khoản nào,
+     * và người có mã tra cứu không nên xóa được chứng từ.
+     */
+    public static Booking deleteFinished(Connection conn, int bookingId, int userId)
+            throws SQLException, BookingException {
+
+        Booking booking = BookingDAO.findByIdWithLines(conn, bookingId);
+        if (booking == null) {
+            throw new BookingException("Không tìm thấy đơn đặt lịch.");
+        }
+        if (booking.getUserId() == null || booking.getUserId() != userId) {
+            throw new BookingException("Đơn này không thuộc tài khoản của bạn.");
+        }
+        if (!booking.isCompleted() && !booking.isCancelled()) {
+            throw new BookingException("Chỉ xóa được đơn đã hoàn tất hoặc đã hủy."
+                    + " Đơn đang còn hiệu lực thì hãy trả phòng hoặc hủy trước.");
+        }
+
+        int rows = BookingDAO.deleteFinished(conn, bookingId, userId);
+        if (rows == 0) {
+            throw new BookingException("Đơn vừa thay đổi trạng thái, vui lòng tải lại trang.");
+        }
+        return booking;
+    }
+
     /** Tra cứu đơn cho khách vãng lai bằng mã tra cứu + số điện thoại đã dùng khi đặt. */
     public static Booking lookupGuestBooking(Connection conn, String code, String phone)
             throws SQLException, BookingException {

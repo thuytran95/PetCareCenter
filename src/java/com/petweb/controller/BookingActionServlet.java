@@ -65,6 +65,16 @@ public class BookingActionServlet extends HttpServlet {
                 BookingService.cancel(conn, bookingId);
                 request.getSession().setAttribute("message",
                         "Đã hủy đơn #" + bookingId + ".");
+            } else if ("delete".equals(action)) {
+                UserAccount owner = MyUtils.getLoginedUser(request.getSession());
+                if (owner == null) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                            "Cần đăng nhập để xóa đơn");
+                    return;
+                }
+                BookingService.deleteFinished(conn, bookingId, owner.getId());
+                request.getSession().setAttribute("message",
+                        "Đã xóa đơn #" + bookingId + " khỏi lịch sử.");
             } else if ("checkout".equals(action)) {
                 BookingService.checkOut(conn, bookingId);
                 request.getSession().setAttribute("message",
@@ -84,14 +94,32 @@ public class BookingActionServlet extends HttpServlet {
         // Bấm từ hồ sơ thú cưng hay trang chủ thì quay lại đúng chỗ đó,
         // không quăng khách sang trang hóa đơn.
         String back = request.getParameter("back");
+        // Đơn vừa bị xóa thì không còn hóa đơn nào để quay về
+        if ("delete".equals(action) && back == null) {
+            back = "myBookings";
+        }
         if ("petProfile".equals(back)) {
             response.sendRedirect(request.getContextPath() + "/petProfile");
         } else if ("home".equals(back) || "index".equals(back)) {
             response.sendRedirect(request.getContextPath() + "/");
         } else if ("myBookings".equals(back)) {
-            response.sendRedirect(request.getContextPath() + "/myBookings");
+            // Giữ lại bộ lọc theo bé: thao tác xong mà nhảy về danh sách đầy đủ
+            // thì người dùng phải lọc lại từ đầu.
+            String backPet = request.getParameter("backPetId");
+            response.sendRedirect(request.getContextPath() + "/myBookings"
+                    + (isPositiveInt(backPet) ? "?petId=" + backPet : ""));
         } else {
             response.sendRedirect(request.getContextPath() + "/invoice?bookingId=" + bookingId);
+        }
+    }
+
+    /** Chỉ ghép petId vào URL khi nó thực sự là một số dương. */
+    private static boolean isPositiveInt(String raw) {
+        if (raw == null || raw.isBlank()) return false;
+        try {
+            return Integer.parseInt(raw.trim()) > 0;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 

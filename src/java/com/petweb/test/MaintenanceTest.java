@@ -124,7 +124,10 @@ public class MaintenanceTest {
         eq("don DA THANH TOAN khong bao gio bi huy kieu nay",
                 Booking.STATUS_PAID, statusOf(conn, paidLate));
 
-        int inGrace = hotelBooking(conn, ts(0), ts(3));
+        // Mốc tính theo GIỜ chứ không theo ngày: ts(0) là 9 giờ sáng hôm nay,
+        // nên chạy vào buổi chiều là đã quá thời gian ân hạn và bài kiểm thử
+        // hỏng dù mã vẫn đúng.
+        int inGrace = hotelBooking(conn, hoursFromNow(-1), ts(3));
         BookingService.confirm(conn, inGrace);
         MaintenanceService.cancelNoShows(conn);
         eq("con trong thoi gian an han thi chua huy",
@@ -207,6 +210,11 @@ public class MaintenanceTest {
 
     static Timestamp soon() {
         return ts(60);
+    }
+
+    /** Mốc thời gian chính xác theo giờ, không bị kéo về 9 giờ sáng như ts(). */
+    static Timestamp hoursFromNow(int hours) {
+        return Timestamp.valueOf(LocalDateTime.now().plusHours(hours).withNano(0));
     }
 
     static Timestamp ts(int daysFromNow) {

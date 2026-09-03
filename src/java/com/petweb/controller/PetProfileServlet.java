@@ -2,8 +2,10 @@ package com.petweb.controller;
 
 import com.petweb.dao.BookingDAO;
 import com.petweb.dao.PetDAO;
+import com.petweb.model.Pet;
 import com.petweb.model.PetStay;
 import com.petweb.model.UserAccount;
+import com.petweb.service.PetService;
 import com.petweb.utils.MyUtils;
 
 import jakarta.servlet.ServletException;
@@ -15,6 +17,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,12 +47,32 @@ public class PetProfileServlet extends HttpServlet {
 
         Connection conn = BookingServlet.requireConnection(request);
         try {
-            request.setAttribute("pets", PetDAO.findByOwner(conn, user.getId()));
+            List<Pet> pets = PetDAO.findByOwner(conn, user.getId());
+            request.setAttribute("pets", pets);
 
             // Toàn bộ đợt lưu trú còn hiệu lực, gom theo bé. Một bé có thể có
             // nhiều đợt đặt trước, nên lấy cả danh sách chứ không chỉ đợt đầu.
             request.setAttribute("stays", BookingDAO.groupStaysByPet(
                     BookingDAO.findCurrentStaysByOwner(conn, user.getId())));
+
+            // Bé còn đơn hiệu lực thì không xóa được, và xóa bé là mất luôn sổ
+            // sức khỏe. Đưa hai con số này ra để thẻ báo trước, thay vì để người
+            // dùng bấm xóa rồi mới nhận thông báo từ chối.
+            Map<Integer, Integer> activeOrders = new HashMap<>();
+            Map<Integer, Integer> healthCounts = new HashMap<>();
+            Map<Integer, Integer> orderCounts = new HashMap<>();
+            for (Pet p : pets) {
+                activeOrders.put(p.getPetId(),
+                        BookingDAO.countActiveBookingsForPet(conn, p.getPetId()));
+                healthCounts.put(p.getPetId(),
+                        PetService.healthRecordsAtRisk(conn, p.getPetId()));
+                // Tổng số đơn đã đặt, để thẻ dẫn thẳng sang danh sách đơn của bé
+                orderCounts.put(p.getPetId(),
+                        BookingDAO.countBookingsForPet(conn, p.getPetId()));
+            }
+            request.setAttribute("activeOrders", activeOrders);
+            request.setAttribute("healthCounts", healthCounts);
+            request.setAttribute("orderCounts", orderCounts);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Lỗi khi tải danh sách thú cưng của userId=" + user.getId(), e);
             request.setAttribute("loadError", "Không tải được danh sách thú cưng.");

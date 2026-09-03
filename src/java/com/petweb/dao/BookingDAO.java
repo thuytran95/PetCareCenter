@@ -401,6 +401,84 @@ public class BookingDAO {
     }
 
     /**
+     * Số đơn CÒN HIỆU LỰC đang gắn với một bé.
+     *
+     * Dùng để chặn việc xóa hồ sơ bé khi bé vẫn đang có lịch: xóa xong thì
+     * booking.pet_id bị đặt NULL, đơn thành mồ côi, và nếu bé đang ở khách sạn
+     * thì phòng vẫn bị chiếm mà không còn nút nào để trả phòng.
+     *
+     * "Còn hiệu lực" nghĩa là đơn còn việc CHƯA diễn ra xong, chứ không chỉ dựa
+     * vào trạng thái. Một đơn đã thanh toán mà mọi dịch vụ đều đã qua thì thực
+     * chất xong rồi, chỉ chờ tác vụ nền đóng lại — chặn nó sẽ khiến người dùng
+     * không xóa được hồ sơ trong suốt thời gian máy chủ tắt.
+     *
+     * Đơn nháp quá hạn giữ chỗ cũng không tính, vì nó vốn sắp bị dọn.
+     */
+    public static int countActiveBookingsForPet(Connection conn, int petId) throws SQLException {
+        String sql = """
+            SELECT count(*)
+            FROM booking b
+            WHERE b.pet_id = ?
+              AND (
+                    b.status IN ('CONFIRMED','PAID')
+                 OR (b.status = 'DRAFT'
+                     AND b.created_at > now() - (? || ' hours')::interval)
+              )
+              AND EXISTS (
+                    SELECT 1 FROM booking_line l
+                    WHERE l.booking_id = b.booking_id
+                      AND COALESCE(l.end_at, l.start_at) > now()
+              )
+        """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, petId);
+            ps.setString(2, String.valueOf(ServiceCatalogDAO.DRAFT_HOLD_HOURS));
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        }
+    }
+
+    /**
+     * Xóa hẳn một đơn ĐÃ KẾT THÚC khỏi lịch sử.
+     *
+     * Điều kiện trạng thái nằm ngay trong câu lệnh nên không có kẽ hở giữa lúc
+     * kiểm tra và lúc xóa: đơn vừa đổi trạng thái thì câu này trả về 0 dòng.
+     *
+     * Dây chuyền theo sau, do khóa ngoại quyết định:
+     *  - booking_line và booking_line_item: xóa theo (ON DELETE CASCADE).
+     *  - notification: nhật ký tin nhắn của đơn xóa theo (ON DELETE CASCADE).
+     *  - pet_health_record: GIỮ LẠI, chỉ mất đường dẫn tới đơn
+     *    (ON DELETE SET NULL) — sổ tiêm của bé không bị ảnh hưởng.
+     */
+    public static int deleteFinished(Connection conn, int bookingId, int userId)
+            throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(
+                "DELETE FROM booking WHERE booking_id = ? AND user_id = ?"
+              + " AND status IN ('COMPLETED','CANCELLED')")) {
+            ps.setInt(1, bookingId);
+            ps.setInt(2, userId);
+            return ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Số đơn đã đặt của một bé, dùng để hiện ngay trên thẻ thú cưng.
+     *
+     * Không tính đơn nháp — đó là thứ khách chưa chốt, đưa vào con số này chỉ
+     * làm người dùng bối rối vì thấy nhiều hơn số đơn họ thực sự đã đặt.
+     */
+    public static int countBookingsForPet(Connection conn, int petId) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(
+                "SELECT count(*) FROM booking WHERE pet_id = ? AND status <> 'DRAFT'")) {
+            ps.setInt(1, petId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        }
+    }
+
+    /**
      * Toàn bộ lịch sử đặt lịch của một khách, kèm các dòng dịch vụ.
      *
      * Truyền petId khác null để chỉ lấy đơn của đúng một bé. Đơn nháp bị bỏ qua
