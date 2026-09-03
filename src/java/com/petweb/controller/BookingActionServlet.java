@@ -103,9 +103,23 @@ public class BookingActionServlet extends HttpServlet {
         } else if ("home".equals(back) || "index".equals(back)) {
             response.sendRedirect(request.getContextPath() + "/");
         } else if ("myBookings".equals(back)) {
-            response.sendRedirect(request.getContextPath() + "/myBookings");
+            // Giữ lại bộ lọc theo bé: thao tác xong mà nhảy về danh sách đầy đủ
+            // thì người dùng phải lọc lại từ đầu.
+            String backPet = request.getParameter("backPetId");
+            response.sendRedirect(request.getContextPath() + "/myBookings"
+                    + (isPositiveInt(backPet) ? "?petId=" + backPet : ""));
         } else {
             response.sendRedirect(request.getContextPath() + "/invoice?bookingId=" + bookingId);
+        }
+    }
+
+    /** Chỉ ghép petId vào URL khi nó thực sự là một số dương. */
+    private static boolean isPositiveInt(String raw) {
+        if (raw == null || raw.isBlank()) return false;
+        try {
+            return Integer.parseInt(raw.trim()) > 0;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 

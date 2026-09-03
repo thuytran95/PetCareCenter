@@ -78,13 +78,9 @@ public class RoutingTest {
 
         // Trang chủ phải nhận cả ba lối vào, vì LoginServlet chuyển hướng về gốc
         checkServletMaps("com.petweb.controller.HomeController", "", "/index", "/home");
-        // Bảng tin trang chủ nay nạp qua API, nên chính API này mới là chỗ
-        // bắt buộc phải có kết nối CSDL.
-        checkServletMaps("com.petweb.controller.HomeDashboardServlet", "/api/homeDashboard");
-        check("duong dan API bang tin duoc cap ket noi",
-                JDBCFilter.matchesMapping("/api/homeDashboard", null,
-                        Set.of("/api/homeDashboard")), "khong khop");
-
+        // Bảng tin trang chủ do chính HomeController nạp rồi forward sang
+        // index.jsp, nên gốc ứng dụng BẮT BUỘC phải được cấp kết nối CSDL —
+        // đó là điều nhóm 1 ở trên khóa lại.
         checkServletMaps("com.petweb.controller.PetProfileServlet", "/petProfile");
         checkServletMaps("com.petweb.controller.MyBookingsServlet", "/myBookings");
         checkServletMaps("com.petweb.controller.PetHealthServlet", "/petHealth");
